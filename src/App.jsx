@@ -1,9 +1,19 @@
 import React from "react";
+import { Route, Routes } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
+import ServiceHoursPage from "./pages/ServiceHoursPage";
 
 export default function App() {
   return (
-    <div className="bg-red-300 text-2xl">
-      Sphinx of black quartz, judge my vow.
-    </div>
+    <>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/service-hours" element={<ServiceHoursPage />} />
+      </Routes>
+    </>
   );
 }
