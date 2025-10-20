@@ -1,4 +1,4 @@
-import "@fontsource-variable/inter-tight";
+import '@fontsource-variable/roboto-condensed';
 import "./index.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
