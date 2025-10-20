@@ -18,34 +18,36 @@ export default function LoginPage() {
   }, []);
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#e3e8ef] to-[#f8fafc] px-4">
-      <div className="bg-white flex rounded-3xl shadow-2xl overflow-hidden w-full max-w-6xl min-h-[600px]">
+    <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e3e8ef] to-[#f8fafc] px-4">
+      <div className="bg-white flex flex-col lg:flex-row rounded-3xl shadow-2xl overflow-hidden w-full max-w-6xl min-h-[600px]">
         {/* Left Side: Form */}
-        <div className="w-full sm:w-1/2 px-12 py-16 flex flex-col justify-center">
-          <img src="images/funval-logo.svg" alt="" />
+        <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-8 sm:px-12 py-16">
+          <div className="w-full max-w-md">
+            <img src="/images/funval-logo.svg" alt="Funval Logo" className="mb-8 w-40" />
 
-          <form className="flex flex-col gap-6 mt-10">
-            <input
-              type="email"
-              placeholder="Email"
-              className="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition w-full"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              className="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition w-full"
-            />
-            <button
-              type="submit"
-              className="bg-[#155CFD] text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 active:scale-95 transition-transform duration-200"
-            >
-              Login
-            </button>
-          </form>
+            <form className="flex flex-col gap-6">
+              <input
+                type="email"
+                placeholder="Email"
+                className="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition w-full"
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                className="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition w-full"
+              />
+              <button
+                type="submit"
+                className="bg-[#155CFD] text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 active:scale-95 transition-transform duration-200"
+              >
+                Login
+              </button>
+            </form>
+          </div>
         </div>
 
         {/* Right Side: Carousel */}
-        <div className="hidden md:flex w-1/2 relative items-center justify-center bg-gray-100">
+        <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center bg-gray-100">
           {images.map((img, i) => (
             <img
               key={i}
@@ -57,9 +59,10 @@ export default function LoginPage() {
             />
           ))}
 
-          {/* Soft Overlay */}
+          {/* Overlay */}
           <div className="absolute inset-0 bg-black/30" />
 
+          {/* Dots */}
           <div className="absolute bottom-6 flex gap-2 justify-center w-full">
             {images.map((_, i) => (
               <button
