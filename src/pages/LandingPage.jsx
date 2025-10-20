@@ -8,7 +8,11 @@ export default function LandingPage() {
       <div className="min-h-screen flex flex-col items-center justify-between">
         <header className="fixed w-full lg:w-250 xl:w-295 p-5 sm:p-8 flex items-center justify-center">
           <div className="w-full flex items-center justify-between">
-            <img className="w-35 md:w-40" src="/images/funval-logo.svg" alt="" />
+            <img
+              className="w-35 md:w-40"
+              src="/images/funval-logo.svg"
+              alt=""
+            />
             <Link to={"/login"}>
               <button className="bg-blue-950 text-white md:text-lg p-2 px-4 rounded-sm drop-shadow-md drop-shadow-black/40 hover:cursor-pointer hover:scale-104 duration-200">
                 Acceder
