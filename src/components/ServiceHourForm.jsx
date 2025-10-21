@@ -7,14 +7,14 @@ export default function ServiceHourForm() {
 
   return (
     <>
-      <div className="min-h-screen bg-blue-500 flex items-center justify-center">
-        <section className="bg-white w-70 p-4 rounded-lg flex flex-col items-center justify-between">
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <section className="bg-white w-70 sm:w-130 p-4 sm:p-8 rounded-lg flex flex-col items-center justify-between drop-shadow-lg drop-shadow-black/60">
           <img
             className="w-40 mb-6 mt-2"
             src="/images/funval-logo.svg"
             alt=""
           />
-          <h1 className="mb-3 text-gray-700">
+          <h1 className="mb-3 text-gray-700 font-bold">
             Formulario de horas de servicio -{" "}
             <span
               className={`${
