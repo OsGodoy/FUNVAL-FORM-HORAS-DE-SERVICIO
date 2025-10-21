@@ -1,0 +1,77 @@
+[
+  {
+    "nombre": "Escuela",
+    "descripcion": "Administración general de la escuela",
+    "vista": "/school",
+    "roles": ["Admin", "Student"],
+    "order": 3,
+    "icono": "School"
+  },
+  {
+    "nombre": "Servicios",
+    "descripcion": "Servicios académicos disponibles",
+    "vista": "/servicios",
+    "roles": ["Admin", "Student"],
+    "order": 1,
+    "icono": "Briefcase"
+  },
+  {
+    "nombre": "Estudiantes",
+    "descripcion": "Gestión y seguimiento de estudiantes",
+    "vista": "/students",
+    "roles": ["Admin", "Student"],
+    "order": 2,
+    "icono": "GraduationCap"
+  },
+  {
+    "nombre": "Configuración",
+    "descripcion": "Opciones avanzadas del sistema",
+    "vista": null,
+    "roles": ["Admin"],
+    "order": 4,
+    "icono": "Settings",
+    "children": [
+      {
+        "nombre": "Menús",
+        "descripcion": "Gestión del menú del sistema",
+        "vista": "/configuracion/menus",
+        "roles": ["Admin"],
+        "order": 1,
+        "icono": "MenuSquare"
+      },
+      {
+        "nombre": "Permisos",
+        "descripcion": "Control de acceso y permisos por rol",
+        "vista": "/configuracion/permissions",
+        "roles": ["Admin"],
+        "order": 2,
+        "icono": "KeyRound"
+      },
+
+      {
+        "nombre": "Categorías",
+        "descripcion": "Gestión de categorías del sistema",
+        "vista": "/categories",
+        "roles": ["Admin", "Student"],
+        "order": 3,
+        "icono": "LayoutList"
+      },
+      {
+        "nombre": "Roles",
+        "descripcion": "Administración de los roles de usuario",
+        "vista": "/roles",
+        "roles": ["Admin"],
+        "order": 4,
+        "icono": "Shield"
+      },
+      {
+        "nombre": "Usuarios",
+        "descripcion": "Gestión de usuarios del sistema",
+        "vista": "/users",
+        "roles": ["Admin"],
+        "order": 5,
+        "icono": "Users"
+      }
+    ]
+  }
+]
