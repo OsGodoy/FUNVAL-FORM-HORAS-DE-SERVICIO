@@ -14,7 +14,7 @@ export default function ServiceHourForm1() {
         <p className="self-start text-sm">N° de matricula</p>
         <input
           className="text-blue-500 font-medium border text-sm w-full border-gray-400 p-2 outline-none"
-          type="number"
+          type="text"
         />
       </div>
       <div className="w-full flex flex-col items-center justify-center">
