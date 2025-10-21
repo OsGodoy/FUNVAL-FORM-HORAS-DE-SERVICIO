@@ -3,7 +3,7 @@ import config from './config.js';
 
 const client = axios.create({
   baseURL: config.apiBaseUrl,
-  timeout: 8000,
+  timeout: config.apiTimeout,
   withCredentials: true,
 });
 
