@@ -20,8 +20,8 @@ export default function LandingPage() {
             </Link>
           </div>
         </header>
-        <section className="w-full px-6 grow flex items-start justify-center bg-[url(/images/bg-image.png)] sm:bg-left bg-flip-x bg-top bg-cover md:bg-[url(/images/bg-image-lg.png)] md:bg-[position:36%_80%] 2xl:md:bg-[position:10%_0%]">
-          <div className="h-115 sm:h-130 lg:h-150 xl:h-160 w-80 sm:w-125 md:w-155 lg:w-190 flex items-center justify-end">
+        <section className="w-full px-6 grow flex items-start justify-center bg-[url(/images/bg-image.png)] sm:bg-left bg-flip-x bg-top bg-cover md:bg-[url(/images/bg-image-lg.png)] md:bg-[position:36%_80%] 2xl:md:bg-[position:0%_0%]">
+          <div className="h-110 sm:h-130 lg:h-150 xl:h-160 w-80 sm:w-125 md:w-155 lg:w-190 flex items-center justify-end">
             <h2 className="text-[32px] sm:text-[40px] md:text-5xl lg:text-6xl text-end leading-8 sm:leading-10 md:leading-12 lg:leading-15 bg-gradient-to-bl from-rose-500 via-indigo-700 to-sky-600 bg-clip-text text-transparent">
               Si estudiar abre <br /> puertas <br />
               <span className="font-semibold sm:font-medium">
