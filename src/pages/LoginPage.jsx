@@ -34,7 +34,6 @@ export default function LoginPage() {
         } else {
           localStorage.removeItem("rememberedEmail");
         }
-        await new Promise((resolve) => setTimeout(resolve, 0));
 
         navigate("/home");
       }
