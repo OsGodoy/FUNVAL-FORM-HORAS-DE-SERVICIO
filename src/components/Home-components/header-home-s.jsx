@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '../../contexts/Auth-context'
 
 export default function HeaderHome() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const { user, logout } = useAuth()
 
   const navLinks = [
     { name: 'Página Principal', path: '' },
@@ -82,7 +84,7 @@ export default function HeaderHome() {
             className="flex items-center gap-1"
           >
             <span className="text-sm font-semibold bg-gray-100 rounded-full px-3 py-1 hover:bg-gray-200">
-              PS
+              {`${user.name[0]}${user.lastname[0]}`}
             </span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -111,7 +113,10 @@ export default function HeaderHome() {
                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                   Cambiar contraseña
                 </li>
-                <li className="px-4 py-2 text-red-600 hover:bg-gray-100 cursor-pointer">
+                <li
+                  className="px-4 py-2 text-red-600 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => logout()}
+                >
                   Cerrar sesión
                 </li>
               </ul>
