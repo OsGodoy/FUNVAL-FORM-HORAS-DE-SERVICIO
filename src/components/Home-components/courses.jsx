@@ -1,48 +1,48 @@
-import { useState } from 'react'
-import Cards from '../shared/Cards'
-import { Link, NavLink } from 'react-router-dom'
+import { useState } from "react";
+import Cards from "../shared/Cards";
+import { Link, NavLink } from "react-router-dom";
 
 const coursesData = [
   {
     id: 1,
-    title: 'Instituto',
+    title: "Instituto",
     progress: 46,
-    url: '',
+    url: "",
     image:
-      'https://www.estudiantefunval.org/pluginfile.php/91/course/overviewfiles/Instituto.png',
+      "https://www.estudiantefunval.org/pluginfile.php/91/course/overviewfiles/Instituto.png",
   },
   {
     id: 2,
-    title: 'Front End',
+    title: "Front End",
     progress: 100,
-    url: '',
+    url: "",
     image:
-      'https://www.estudiantefunval.org/pluginfile.php/88409/course/overviewfiles/FRONTEND%202.png',
+      "https://www.estudiantefunval.org/pluginfile.php/88409/course/overviewfiles/FRONTEND%202.png",
   },
   {
     id: 3,
-    title: 'Servicio',
+    title: "Servicio",
     progress: 0,
-    url: '/services-hours',
+    url: "/service-hours",
     image:
-      'https://www.estudiantefunval.org/pluginfile.php/92/course/overviewfiles/requerimiento%20de%20nivel.png',
+      "https://www.estudiantefunval.org/pluginfile.php/92/course/overviewfiles/requerimiento%20de%20nivel.png",
   },
   {
     id: 4,
-    title: 'Valores ',
+    title: "Valores ",
     progress: 0,
-    url: '',
+    url: "",
     image:
-      'https://www.estudiantefunval.org/pluginfile.php/128/course/overviewfiles/Valores.png',
+      "https://www.estudiantefunval.org/pluginfile.php/128/course/overviewfiles/Valores.png",
   },
-]
+];
 
 export default function Courses() {
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState("");
 
   const filteredCourses = coursesData.filter((c) =>
     c.title.toLowerCase().includes(search.toLowerCase())
-  )
+  );
 
   return (
     <section className="p-8 bg-gray-200 min-h-screen">
@@ -102,5 +102,5 @@ export default function Courses() {
         </div>
       </div>
     </section>
-  )
+  );
 }
