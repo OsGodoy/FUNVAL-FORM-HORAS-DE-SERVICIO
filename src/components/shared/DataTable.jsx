@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, FileSpreadsheet } from "lucide-react";
+import * as XLSX from "xlsx";
+import toast from "react-hot-toast";
 
 export default function DataTable({
   headers = [],
   data = [],
-  pageSize = 10,
-  title = "Data Table",
+  pageSize: initialPageSize = 10,
+  exportable = false,
+  exportFileName = "data_export",
 }) {
   const [rows, setRows] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(initialPageSize);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -36,11 +40,89 @@ export default function DataTable({
 
   const totalPages = Math.ceil(total / pageSize);
 
+  const handleExportExcel = () => {
+    if (data.length === 0) {
+      toast.console.warn("No hay datos para exportar");
+      return;
+    }
+
+
+    const exportableHeaders = headers.filter((h) => h.key !== "actions");
+
+    const now = new Date();
+    const date = now.toLocaleDateString("es-CO").replace(/\//g, "-");
+    const time = now.toLocaleTimeString("es-CO").replace(/:/g, "-");
+    const fileName = `${exportFileName}_${date}_${time}.xlsx`;
+
+    const exportData = data.map((row) => {
+      const formattedRow = {};
+      exportableHeaders.forEach((h) => {
+        formattedRow[h.label] = row[h.key];
+      });
+      return formattedRow;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Datos");
+    XLSX.writeFile(workbook, fileName);
+
+    toast.success("Archivo exportado correctamente");
+  };
+
+  const getAlingTextClass = (aling) => {
+    switch (aling) {
+      case 'center': return 'text-center';
+      case 'right': return 'text-right';
+      default: return 'text-left';
+    }
+  };
+
+  const getActionCellClass = (align) => {
+    let justify = "justify-start";
+    if (align === "center") justify = "justify-center";
+    if (align === "right") justify = "justify-end";
+    return `flex items-center gap-2 ${justify}`;
+  };
+
   return (
     <div className="w-full bg-white rounded-2xl shadow-md p-4 transition-all duration-300">
-      {/* 🔹 Encabezado */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-gray-700">{title}</h2>
+      <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 text-sm text-gray-600">
+            <span>Mostrar</span>
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setPage(1);
+              }}
+              className="border border-gray-300 rounded-lg px-2 py-1 focus:ring focus:ring-blue-300"
+            >
+              {[5, 10, 20, 50].map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+            <span>registros</span>
+          </div>
+
+          {exportable && (
+            <div className="relative group inline-block">
+              <button
+                onClick={handleExportExcel}
+                className="cursor-pointer flex items-center gap-2 bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm shadow-sm hover:bg-green-700 hover:shadow-md transition-all duration-200"
+              >
+                <FileSpreadsheet size={18} />
+              </button>
+              <span className="absolute w-25 text-center -top-6 left-1/2 -translate-x-1/2 bg-gray-800/60 text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-200">
+                Exportar a Excel
+              </span>
+            </div>
+          )}
+        </div>
+
         <div className="relative">
           <input
             type="text"
@@ -56,13 +138,13 @@ export default function DataTable({
         </div>
       </div>
 
-      {/* 🔹 Tabla */}
+
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm text-gray-700">
           <thead className="bg-gray-100 text-gray-700 uppercase">
             <tr>
               {headers.map((header) => (
-                <th key={header.key} className="px-4 py-2 text-left font-semibold">
+                <th key={header.key} className={`px-4 py-2 text-left font-semibold ${getAlingTextClass(header.aling)}`}>
                   {header.label}
                 </th>
               ))}
@@ -77,13 +159,12 @@ export default function DataTable({
               </tr>
             ) : rows.length > 0 ? (
               rows.map((row, idx) => (
-                <tr
-                  key={idx}
-                  className="hover:bg-gray-50 transition-colors border-t"
-                >
+                <tr key={idx} className="hover:bg-gray-50 transition-colors border-t">
                   {headers.map((header) => (
-                    <td key={header.key} className="px-4 py-2">
-                      {/* 🔸 Si el header tiene función render, úsala */}
+                    <td key={header.key} className={`px-4 py-2 ${header.render
+                        ? getActionCellClass(header.aling)
+                        : getAlingTextClass(header.aling)
+                      }`}>
                       {header.render ? header.render(row) : row[header.key]}
                     </td>
                   ))}
@@ -100,7 +181,6 @@ export default function DataTable({
         </table>
       </div>
 
-      {/* 🔹 Paginación */}
       <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
         <p>
           Página {page} de {totalPages || 1}

@@ -1,6 +1,9 @@
 import { Toaster } from "react-hot-toast";
 import AppRouter from "./router/AppRouter";
 import { AuthProvider } from "./contexts/Auth-context";
+import { Toaster } from "react-hot-toast";
+import AppRouter from "./router/AppRouter";
+import { AuthProvider } from "./contexts/Auth-context";
 
 export default function App() {
   return (
