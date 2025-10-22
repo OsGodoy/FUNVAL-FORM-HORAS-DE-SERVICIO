@@ -1,6 +1,8 @@
 import { Globe, Phone, Mail, Facebook, Youtube, Instagram } from 'lucide-react'
+import { useAuth } from '../../contexts/Auth-context'
 
 export default function Footer() {
+  const { user, logout } = useAuth()
   return (
     <footer className="bg-gray-900 text-white py-8 px-6">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
@@ -40,10 +42,16 @@ export default function Footer() {
             <span>Contactar con el soporte del sitio</span>
           </button>
 
-          <p className="text-sm text-gray-300">
-            Usted se ha identificado como <br />
-            <span className="font-semibold text-white">Usuario</span>
-            <span className="text-sm mt-1 text-blue-400 cursor-pointer hover:underline">
+          <p className="text-sm flex flex-col text-gray-300">
+            <span className="flex gap-1">
+              <span>Usted se ha identificado como</span>
+              <span className="font-semibold text-white">{`${user.name} ${user.lastname}`}</span>
+            </span>
+
+            <span
+              className="text-sm mt-1 text-blue-400 cursor-pointer hover:underline"
+              onClick={() => logout()}
+            >
               (Cerrar sesión)
             </span>
           </p>
