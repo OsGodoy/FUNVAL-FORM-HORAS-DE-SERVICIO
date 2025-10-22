@@ -1,24 +1,32 @@
-import { Route, Routes } from "react-router-dom";
-import LandingPage from "./pages/LandingPage";
-import LoginPage from "./pages/LoginPage";
-import HomePage from "./pages/HomePage";
-import ServiceHoursPage from "./pages/ServiceHoursPage";
-import ServiceHourLayout from "./layouts/ServiceHourLayout";
-import RolesPage from "./pages/RolesPage";
+import { Toaster } from "react-hot-toast";
+import AppRouter from "./router/AppRouter";
+import { AuthProvider } from "./contexts/Auth-context";
 
 export default function App() {
   return (
-    <>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/home" element={<HomePage />} />
-
-        <Route element={<ServiceHourLayout />}>
-          <Route path="/roles" element={<RolesPage />} />
-          <Route path="/service-hours" element={<ServiceHoursPage />} />
-        </Route>
-      </Routes>
-    </>
+    <AuthProvider>
+      <AppRouter />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            borderRadius: "8px",
+          },
+          success: {
+            iconTheme: {
+              primary: "#39b98e",
+              secondary: "#fff",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#e53e3e",
+              secondary: "#fff",
+            },
+          },
+        }}
+      />
+    </AuthProvider>
   );
 }

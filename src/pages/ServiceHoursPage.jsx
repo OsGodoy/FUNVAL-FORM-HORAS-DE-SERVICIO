@@ -6,6 +6,5 @@ export default function ServiceHoursPage() {
      <div className="h-full flex items-center justify-center">
          <ServiceHourForm />
       </div>
-    
   );
 }

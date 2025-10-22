@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Cards from '../shared/Cards'
 import { Link, NavLink } from 'react-router-dom'
+import { useAuth } from '../../contexts/Auth-context'
 
 const coursesData = [
   {
@@ -23,7 +24,7 @@ const coursesData = [
     id: 3,
     title: 'Servicio',
     progress: 0,
-    url: '/services-hours',
+    url: '/service-hours',
     image:
       'https://www.estudiantefunval.org/pluginfile.php/92/course/overviewfiles/requerimiento%20de%20nivel.png',
   },
@@ -38,6 +39,7 @@ const coursesData = [
 ]
 
 export default function Courses() {
+  const { user } = useAuth()
   const [search, setSearch] = useState('')
 
   const filteredCourses = coursesData.filter((c) =>
@@ -45,11 +47,11 @@ export default function Courses() {
   )
 
   return (
-    <section className="p-8 bg-gray-200 min-h-screen">
-      <h2 className="text-2xl font-semibold mb-4">Bienvenido @usuario</h2>
+    <section className="px-4 sm:px-8 py-8 bg-gray-200 min-h-screen">
+      <h2 className="text-2xl font-semibold mb-4">{`Bienvenido ${user.name}`}</h2>
 
       {/*Filters Section*/}
-      <div className="bg-white p-10 rounded-md shadow-sm mb-6">
+      <div className="bg-white p-4 sm:p-10 rounded-md shadow-sm mb-6">
         <h2 className="font-semibold text-gray-700 mb-3">
           Vista general de curso
         </h2>
@@ -81,7 +83,7 @@ export default function Courses() {
         </div>
 
         {/* Courses Grid */}
-        <div className="grid py-8 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid py-8 gap-6 sm:gap-8 justify-center grid-cols-[repeat(auto-fit,minmax(280px,320px))]">
           {filteredCourses.map((course) => (
             /* Card */
             <Link key={course.id} to={course.url}>
