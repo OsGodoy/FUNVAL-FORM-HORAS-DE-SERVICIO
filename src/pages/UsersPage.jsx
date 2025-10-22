@@ -5,7 +5,7 @@ import { getFunval, deleteFunval } from "../api/funval/services";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
-import { Pencil, PlusCircle, Trash2 } from "lucide-react";
+import { Pencil, PlusCircle, Trash2, UserCheck, UserX } from "lucide-react";
 
 export default function UsersPage() {
   const navigate = useNavigate();
@@ -97,7 +97,13 @@ export default function UsersPage() {
             { key: "role.name", label: "Rol" },
             { key: "email", label: "Correo" },
             { key: "phone", label: "Teléfono" },
-            { key: "status", label: "Estado" },
+            { key: "status",
+              aling: "center",
+               label: "Estado",
+                render: (row) => (
+                 row.status === 'activo' ? <UserCheck color="green" /> : <UserX color="gray" />
+              ), 
+            },
             {
               key: "actions",
               aling: "center",
