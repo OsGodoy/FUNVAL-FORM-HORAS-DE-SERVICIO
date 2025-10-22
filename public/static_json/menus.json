@@ -1,76 +1,76 @@
 [
   {
-    "nombre": "Escuela",
-    "descripcion": "Administración general de la escuela",
-    "vista": "/school",
+    "name": "Escuelas",
+    "description": "Administración general de la escuela",
+    "url": "/schools",
     "roles": ["Admin", "Student"],
     "order": 3,
-    "icono": "School"
+    "icon": "School"
   },
   {
-    "nombre": "Servicios",
-    "descripcion": "Servicios académicos disponibles",
-    "vista": "/servicios",
+    "name": "Servicios",
+    "description": "Servicios académicos disponibles",
+    "url": "/service-hours",
     "roles": ["Admin", "Student"],
     "order": 1,
-    "icono": "Briefcase"
+    "icon": "Briefcase"
   },
   {
-    "nombre": "Estudiantes",
-    "descripcion": "Gestión y seguimiento de estudiantes",
-    "vista": "/students",
+    "name": "Estudiantes",
+    "description": "Gestión y seguimiento de estudiantes",
+    "url": "/students",
     "roles": ["Admin", "Student"],
     "order": 2,
-    "icono": "GraduationCap"
+    "icon": "GraduationCap"
   },
   {
-    "nombre": "Configuración",
-    "descripcion": "Opciones avanzadas del sistema",
-    "vista": null,
+    "name": "Configuración",
+    "description": "Opciones avanzadas del sistema",
+    "url": null,
     "roles": ["Admin"],
     "order": 4,
-    "icono": "Settings",
+    "icon": "Settings",
     "children": [
       {
-        "nombre": "Menús",
-        "descripcion": "Gestión del menú del sistema",
-        "vista": "/configuracion/menus",
+        "name": "Menús",
+        "description": "Gestión del menú del sistema",
+        "url": "/configuracion/menus",
         "roles": ["Admin"],
         "order": 1,
-        "icono": "MenuSquare"
+        "icon": "MenuSquare"
       },
       {
-        "nombre": "Permisos",
-        "descripcion": "Control de acceso y permisos por rol",
-        "vista": "/configuracion/permissions",
+        "name": "Permisos",
+        "description": "Control de acceso y permisos por rol",
+        "url": "/configuracion/permissions",
         "roles": ["Admin"],
         "order": 2,
-        "icono": "KeyRound"
+        "icon": "KeyRound"
       },
 
       {
-        "nombre": "Categorías",
-        "descripcion": "Gestión de categorías del sistema",
-        "vista": "/categories",
+        "name": "Categorías",
+        "description": "Gestión de categorías del sistema",
+        "url": "/categories",
         "roles": ["Admin", "Student"],
         "order": 3,
-        "icono": "LayoutList"
+        "icon": "LayoutList"
       },
       {
-        "nombre": "Roles",
-        "descripcion": "Administración de los roles de usuario",
-        "vista": "/roles",
+        "name": "Roles",
+        "description": "Administración de los roles de usuario",
+        "url": "/roles",
         "roles": ["Admin"],
         "order": 4,
-        "icono": "Shield"
+        "icon": "Shield"
       },
       {
-        "nombre": "Usuarios",
-        "descripcion": "Gestión de usuarios del sistema",
-        "vista": "/users",
+        "name": "Usuarios",
+        "description": "Gestión de usuarios del sistema",
+        "url": "/users",
         "roles": ["Admin"],
         "order": 5,
-        "icono": "Users"
+        "icon": "Users"
       }
     ]
   }
