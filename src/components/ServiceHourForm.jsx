@@ -17,7 +17,7 @@ export default function ServiceHourForm() {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setFileName(file ? file.name : "Ningún archivo seleccionado");
+    setFileName(file && file.name);
     if (file && file.type === "application/pdf") {
       const url = URL.createObjectURL(file);
       setPdfUrl(url);
@@ -93,7 +93,7 @@ export default function ServiceHourForm() {
                 <ul className="grid grid-cols-1 gap-y-3">
                   <li
                     onClick={() => setToggleInfo(true)}
-                    className={`text-blue-500 bg-blue-100 border-2 border-blue-500 rounded-full px-3 py-1.5 text-center leading-4.5 hover:cursor-pointer
+                    className={`text-blue-500 bg-blue-100 border-2 border-blue-500 rounded-full px-3 py-1.5 text-center leading-4.5 hover:cursor-pointer hover:scale-102 duration-200
                       ${toggleInfo ? "lg:truncate lg:w-40" : "lg:w-auto"}
                       `}
                   >
@@ -140,13 +140,13 @@ export default function ServiceHourForm() {
                     <button
                       type="button"
                       onClick={() => setToggleInfo(false)}
-                      className="p-2 text-sm text-white bg-gray-400 rounded-lg"
+                      className="p-2 text-sm text-white bg-gray-400 rounded-lg hover:cursor-pointer"
                     >
                       Cancelar
                     </button>
                     <button
                       type="button"
-                      className="p-2 text-sm text-white bg-blue-500 rounded-lg"
+                      className="p-2 text-sm text-white bg-blue-500 rounded-lg hover:cursor-pointer"
                     >
                       Seleccionar
                     </button>
