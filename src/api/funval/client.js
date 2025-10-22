@@ -14,7 +14,7 @@ client.interceptors.response.use(
     if (error.response) {
       if (error.response.status === 401) {
         console.warn("Sesión expirada o token inválido");
-        // Aquí podrías agregar lógica para redirigir al usuario a la página de login
+        window.location.pathname = '/login';
       } else if (error.response.status >= 500) {
         console.error("Error en el servidor:", error.response.statusText);
       }
