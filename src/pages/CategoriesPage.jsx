@@ -22,6 +22,7 @@ export default function CategoriesPage() {
       toast.error("Error al cargar las categorías");
     }
   };
+console.log(categories);
 
   const handleEdit = (category) => {
     setSelectedCategory(category);
