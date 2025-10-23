@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white py-8 px-6">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
-        {/* --- Columna 1: Contacto --- */}
+        {/* Contact menu */}
         <div>
           <h3 className="font-semibold text-lg mb-3">Contáctanos</h3>
           <div className="flex justify-center md:justify-start gap-3 mb-4">
@@ -35,7 +35,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* --- Columna 2: Centro / Usuario --- */}
+        {/* User menu */}
         <div className="flex flex-col items-center md:items-center justify-center">
           <button className="border border-gray-400 hover:bg-gray-800 rounded-md px-4 py-2 mb-3 flex items-center gap-2">
             <Globe className="w-5 h-5" />
@@ -45,7 +45,7 @@ export default function Footer() {
           <p className="text-sm flex flex-col text-gray-300">
             <span className="flex gap-1">
               <span>Usted se ha identificado como</span>
-              <span className="font-semibold text-white">{`${user.name} ${user.lastname}`}</span>
+              <span className="font-semibold text-white">{`${user.f_name} ${user.f_lastname}`}</span>
             </span>
 
             <span
@@ -63,7 +63,7 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* --- Columna 3: Apps móviles --- */}
+        {/* Apps*/}
         <div className="flex flex-col items-center md:items-end justify-center">
           <p className="mb-3 font-medium">
             Descargar la app para dispositivos móviles

@@ -1,73 +1,82 @@
-import { useEffect, useState } from "react";
-import * as Icons from "lucide-react";
-import { getData } from "../../api/local/services";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from 'react'
+import * as Icons from 'lucide-react'
+import { getData } from '../../api/local/services'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Link, useLocation } from 'react-router-dom'
 
 export default function Sidebar({ collapsed, setCollapsed }) {
-  const [openSubmenu, setOpenSubmenu] = useState(null);
-  const [menuItems, setMenuItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const location = useLocation();
+  const [openSubmenu, setOpenSubmenu] = useState(null)
+  const [menuItems, setMenuItems] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const location = useLocation()
 
   const toggleSubmenu = (name) => {
-    setOpenSubmenu((prev) => (prev === name ? null : name));
-  };
+    setOpenSubmenu((prev) => (prev === name ? null : name))
+  }
 
   const getMenuItems = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
-      const response = await getData("/menus.json");
-      setMenuItems(response.data);
+      const response = await getData('/menus.json')
+      setMenuItems(response.data)
     } catch (error) {
-      setError(error);
-      console.error("Error fetching menu items:", error);
+      setError(error)
+      console.error('Error fetching menu items:', error)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    if (menuItems.length === 0) return;
+    if (menuItems.length === 0) return
 
-    const activeParent = menuItems.find((item) => item.children?.some((child) => child.url === location.pathname));
+    const activeParent = menuItems.find((item) =>
+      item.children?.some((child) => child.url === location.pathname)
+    )
 
     if (activeParent) {
-      setOpenSubmenu(activeParent.name);
+      setOpenSubmenu(activeParent.name)
     } else {
-      setOpenSubmenu(null);
+      setOpenSubmenu(null)
     }
-  }, [location.pathname, menuItems]);
+  }, [location.pathname, menuItems])
 
   useEffect(() => {
-    getMenuItems();
-  }, []);
+    getMenuItems()
+  }, [])
 
-  if (isLoading) return <div className="p-4">Cargando menú...</div>;
-  if (error) return <div className="p-4 text-red-500">Error al cargar el menú.</div>;
+  if (isLoading) return <div className="p-4">Cargando menú...</div>
+  if (error)
+    return <div className="p-4 text-red-500">Error al cargar el menú.</div>
 
   return (
     <motion.aside
       animate={{ width: collapsed ? 80 : 256 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
       className="bg-white shadow-md h-full flex flex-col border-r border-gray-100"
     >
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
         <div className="flex items-center gap-2 overflow-hidden h-7">
-          <motion.img src="/images/iso-tipo-funval.png" alt="isotipo logo" className="w-6 h-6 flex-shrink-0" />
+          <motion.img
+            src="/images/iso-tipo-funval.png"
+            alt="isotipo logo"
+            className="w-6 h-6 flex-shrink-0"
+          />
           <AnimatePresence>
             {!collapsed && (
-              <motion.img
-                key="text-logo"
-                src="/images/funval-logo.svg"
-                alt="logo"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.25 }}
-                className="h-5"
-              />
+              <Link to={'/home'}>
+                <motion.img
+                  key="text-logo"
+                  src="/images/funval-logo.svg"
+                  alt="logo"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  transition={{ duration: 0.25 }}
+                  className="h-5"
+                />
+              </Link>
             )}
           </AnimatePresence>
         </div>
@@ -75,9 +84,13 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="cursor-pointer hover:bg-gray-100 rounded-md transition"
-          title={collapsed ? "Expandir" : "Colapsar"}
+          title={collapsed ? 'Expandir' : 'Colapsar'}
         >
-          <Icons.PanelLeftClose className={`w-5 h-5 text-gray-600 transition-transform duration-300 ${collapsed ? "rotate-180" : ""}`} />
+          <Icons.PanelLeftClose
+            className={`w-5 h-5 text-gray-600 transition-transform duration-300 ${
+              collapsed ? 'rotate-180' : ''
+            }`}
+          />
         </button>
       </div>
 
@@ -85,9 +98,11 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         {menuItems
           .sort((a, b) => a.order - b.order)
           .map((item) => {
-            const Icon = Icons[item.icon] || Icons.Circle;
+            const Icon = Icons[item.icon] || Icons.Circle
 
-            const isParentActive = item.children?.some((child) => child.url === location.pathname);
+            const isParentActive = item.children?.some(
+              (child) => child.url === location.pathname
+            )
 
             if (item.children) {
               return (
@@ -95,14 +110,24 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                   <button
                     onClick={() => toggleSubmenu(item.name)}
                     className={`w-full flex items-center gap-3 px-4 py-2 rounded-md transition 
-                      ${collapsed ? "justify-center" : ""}
-                      ${isParentActive ? "bg-indigo-50 text-[#155CFD]" : "text-gray-700 hover:bg-gray-100"}`}
+                      ${collapsed ? 'justify-center' : ''}
+                      ${
+                        isParentActive
+                          ? 'bg-indigo-50 text-[#155CFD]'
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
                   >
                     <Icon className="w-5 h-5" />
                     {!collapsed && (
                       <>
-                        <span className="flex-1 text-left font-medium">{item.name}</span>
-                        <Icons.ChevronDown className={`w-4 h-4 transition-transform duration-300 ${openSubmenu === item.name ? "rotate-180" : ""}`} />
+                        <span className="flex-1 text-left font-medium">
+                          {item.name}
+                        </span>
+                        <Icons.ChevronDown
+                          className={`w-4 h-4 transition-transform duration-300 ${
+                            openSubmenu === item.name ? 'rotate-180' : ''
+                          }`}
+                        />
                       </>
                     )}
                   </button>
@@ -112,7 +137,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                       <motion.div
                         key={item.name}
                         initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
+                        animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.25 }}
                         className="ml-8 border-l border-gray-200"
@@ -120,24 +145,28 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                         {item.children
                           .sort((a, b) => a.order - b.order)
                           .map((child) => {
-                            const ChildIcon = Icons[child.icon] || Icons.Circle;
+                            const ChildIcon = Icons[child.icon] || Icons.Circle
                             return (
                               <Link
                                 key={child.name}
                                 to={child.url}
                                 className={`flex items-center gap-2 px-4 py-2 text-sm rounded-md transition
-                                  ${location.pathname === child.url ? "bg-blue-50 text-[#155CFD]" : "text-gray-600 hover:bg-gray-50"}`}
+                                  ${
+                                    location.pathname === child.url
+                                      ? 'bg-blue-50 text-[#155CFD]'
+                                      : 'text-gray-600 hover:bg-gray-50'
+                                  }`}
                               >
                                 <ChildIcon className="w-4 h-4" />
                                 <span>{child.name}</span>
                               </Link>
-                            );
+                            )
                           })}
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
-              );
+              )
             }
 
             return (
@@ -145,15 +174,19 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                 key={item.name}
                 to={item.url}
                 className={`flex items-center gap-3 px-4 py-2 font-medium transition rounded-md
-                  ${collapsed ? "justify-center" : ""}
-                  ${location.pathname === item.url ? "bg-blue-50 text-[#155CFD]" : "text-gray-700 hover:bg-gray-100"}`}
+                  ${collapsed ? 'justify-center' : ''}
+                  ${
+                    location.pathname === item.url
+                      ? 'bg-blue-50 text-[#155CFD]'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
               >
                 <Icon className="w-5 h-5" />
                 {!collapsed && <span>{item.name}</span>}
               </Link>
-            );
+            )
           })}
       </nav>
     </motion.aside>
-  );
+  )
 }
