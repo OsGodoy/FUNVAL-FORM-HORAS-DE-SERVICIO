@@ -1,50 +1,60 @@
-import { useState } from "react";
-import Cards from "../shared/Cards";
-import { Link, NavLink } from "react-router-dom";
+import { useState } from 'react'
+import Cards from '../shared/Cards'
+import { Link, NavLink } from 'react-router-dom'
+import { useAuth } from '../../contexts/Auth-context'
 
 const coursesData = [
   {
     id: 1,
-    title: "Instituto",
+    title: 'Instituto',
     progress: 46,
     url: "",
-    image: "https://www.estudiantefunval.org/pluginfile.php/91/course/overviewfiles/Instituto.png",
+    image:
+      "https://www.estudiantefunval.org/pluginfile.php/91/course/overviewfiles/Instituto.png",
   },
   {
     id: 2,
-    title: "Front End",
+    title: 'Front End',
     progress: 100,
     url: "",
-    image: "https://www.estudiantefunval.org/pluginfile.php/88409/course/overviewfiles/FRONTEND%202.png",
+    image:
+      "https://www.estudiantefunval.org/pluginfile.php/88409/course/overviewfiles/FRONTEND%202.png",
   },
   {
     id: 3,
-    title: "Servicio",
+    title: 'Servicio',
     progress: 0,
     url: "/service-hours",
-    image: "https://www.estudiantefunval.org/pluginfile.php/92/course/overviewfiles/requerimiento%20de%20nivel.png",
+    image:
+      "https://www.estudiantefunval.org/pluginfile.php/92/course/overviewfiles/requerimiento%20de%20nivel.png",
   },
   {
     id: 4,
-    title: "Valores ",
+    title: 'Valores ',
     progress: 0,
     url: "",
-    image: "https://www.estudiantefunval.org/pluginfile.php/128/course/overviewfiles/Valores.png",
+    image:
+      "https://www.estudiantefunval.org/pluginfile.php/128/course/overviewfiles/Valores.png",
   },
-];
+]
 
 export default function Courses() {
-  const [search, setSearch] = useState("");
+  const { user } = useAuth()
+  const [search, setSearch] = useState('')
 
-  const filteredCourses = coursesData.filter((c) => c.title.toLowerCase().includes(search.toLowerCase()));
+  const filteredCourses = coursesData.filter((c) =>
+    c.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <section className="px-4 sm:px-8 py-8 bg-gray-200 min-h-screen">
+    <section className="p-8 bg-gray-200 min-h-screen">
       <h2 className="text-2xl font-semibold mb-4">Bienvenido @usuario</h2>
 
       {/*Filters Section*/}
-      <div className="bg-white p-4 sm:p-10 rounded-md shadow-sm mb-6">
-        <h2 className="font-semibold text-gray-700 mb-3">Vista general de curso</h2>
+      <div className="bg-white p-10 rounded-md shadow-sm mb-6">
+        <h2 className="font-semibold text-gray-700 mb-3">
+          Vista general de curso
+        </h2>
 
         <div className="flex flex-wrap gap-3 mb-4 text-sm">
           <select className="border rounded-md px-3 py-1 text-gray-600">
@@ -85,5 +95,5 @@ export default function Courses() {
         </div>
       </div>
     </section>
-  );
+  )
 }

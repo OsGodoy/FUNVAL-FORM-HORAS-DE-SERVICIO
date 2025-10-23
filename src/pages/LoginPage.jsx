@@ -1,54 +1,60 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { postFunval } from "../api/funval/services.js";
+import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { postFunval } from '../api/funval/services.js'
+import { useAuth } from '../contexts/Auth-context.jsx'
 
 export default function LoginPage() {
-  const images = ["/images/carousel/carousel1.jpg", "/images/carousel/carousel2.jpg", "/images/carousel/carousel4.jpg"];
+  const images = [
+    '/images/carousel/carousel1.jpg',
+    '/images/carousel/carousel2.jpg',
+    '/images/carousel/carousel4.jpg',
+  ]
 
-  const [index, setIndex] = useState(0);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-  const navigate = useNavigate();
+  const [index, setIndex] = useState(0)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [remember, setRemember] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
+  const navigate = useNavigate()
+  const { login, isAuthenticated } = useAuth()
 
   useEffect(() => {
-    const savedEmail = localStorage.getItem("rememberedEmail");
-    if (savedEmail) {
-      setEmail(savedEmail);
-      setRemember(true);
+    if (isAuthenticated) {
+      navigate('/home')
     }
-  }, []);
+  }, [isAuthenticated, navigate])
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('rememberedEmail')
+    if (savedEmail) {
+      setEmail(savedEmail)
+      setRemember(true)
+    }
+  }, [])
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      const body = { email, password };
-      const response = await postFunval("/auth/login", body);
+      await login({ email, password }) // ✅ el contexto se encarga de todo
 
-      console.log("Respuesta del servidor:", response.data);
-
-      if (response.data.status === "success") {
-        if (remember) {
-          localStorage.setItem("rememberedEmail", email);
-        } else {
-          localStorage.removeItem("rememberedEmail");
-        }
-
-        navigate("/home");
+      // Guardar el correo si “Recuérdame” está activado
+      if (remember) {
+        localStorage.setItem('rememberedEmail', email)
+      } else {
+        localStorage.removeItem('rememberedEmail')
       }
     } catch (error) {
-      console.error("Error al iniciar sesión:", error);
-      setErrorMsg("Credenciales incorrectas");
+      console.error('Error al iniciar sesión:', error)
+      setErrorMsg('Credenciales incorrectas')
     }
-  };
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % images.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+      setIndex((prev) => (prev + 1) % images.length)
+    }, 4000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#e3e8ef] to-[#f8fafc] px-4">
@@ -56,7 +62,13 @@ export default function LoginPage() {
         {/* Left Side: Form */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-8 sm:px-12 py-16">
           <div className="w-full max-w-md">
-            <img src="/images/funval-logo.svg" alt="Funval Logo" className="mb-8 w-40 " />
+            <Link to={'/'}>
+              <img
+                src="/images/funval-logo.svg"
+                alt="Funval Logo"
+                className="mb-8 w-40 "
+              />
+            </Link>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               <input
@@ -75,13 +87,20 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className={`p-3 rounded-xl border ${
-                    errorMsg ? "border-red-500" : "border-gray-300"
+                    errorMsg ? 'border-red-500' : 'border-gray-300'
                   } focus:outline-none focus:ring-2 focus:ring-indigo-400 transition w-full`}
                 />
-                {errorMsg && <p className="text-red-500 text-sm mt-1">{errorMsg}</p>}
+                {errorMsg && (
+                  <p className="text-red-500 text-sm mt-1">{errorMsg}</p>
+                )}
               </div>
               <label className="flex items-center gap-2 text-sm text-gray-600">
-                <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="accent-indigo-600" />
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                  className="accent-indigo-600"
+                />
                 Recuerdame
               </label>
               <button
@@ -102,7 +121,7 @@ export default function LoginPage() {
               src={img}
               alt={`slide-${i}`}
               className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
-                i === index ? "opacity-100" : "opacity-0"
+                i === index ? 'opacity-100' : 'opacity-0'
               }`}
             />
           ))}
@@ -116,12 +135,14 @@ export default function LoginPage() {
               <button
                 key={i}
                 onClick={() => setIndex(i)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${i === index ? "bg-white w-6" : "bg-gray-400"}`}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  i === index ? 'bg-white w-6' : 'bg-gray-400'
+                }`}
               />
             ))}
           </div>
         </div>
       </div>
     </section>
-  );
+  )
 }
