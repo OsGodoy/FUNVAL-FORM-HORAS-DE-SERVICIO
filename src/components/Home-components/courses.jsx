@@ -8,33 +8,33 @@ const coursesData = [
     id: 1,
     title: 'Instituto',
     progress: 46,
-    url: "",
+    url: '',
     image:
-      "https://www.estudiantefunval.org/pluginfile.php/91/course/overviewfiles/Instituto.png",
+      'https://www.estudiantefunval.org/pluginfile.php/91/course/overviewfiles/Instituto.png',
   },
   {
     id: 2,
     title: 'Front End',
     progress: 100,
-    url: "",
+    url: '',
     image:
-      "https://www.estudiantefunval.org/pluginfile.php/88409/course/overviewfiles/FRONTEND%202.png",
+      'https://www.estudiantefunval.org/pluginfile.php/88409/course/overviewfiles/FRONTEND%202.png',
   },
   {
     id: 3,
     title: 'Servicio',
     progress: 0,
-    url: "/service-hours",
+    url: '/service-hours',
     image:
-      "https://www.estudiantefunval.org/pluginfile.php/92/course/overviewfiles/requerimiento%20de%20nivel.png",
+      'https://www.estudiantefunval.org/pluginfile.php/92/course/overviewfiles/requerimiento%20de%20nivel.png',
   },
   {
     id: 4,
     title: 'Valores ',
     progress: 0,
-    url: "",
+    url: '',
     image:
-      "https://www.estudiantefunval.org/pluginfile.php/128/course/overviewfiles/Valores.png",
+      'https://www.estudiantefunval.org/pluginfile.php/128/course/overviewfiles/Valores.png',
   },
 ]
 
@@ -44,11 +44,11 @@ export default function Courses() {
 
   const filteredCourses = coursesData.filter((c) =>
     c.title.toLowerCase().includes(search.toLowerCase())
-  );
+  )
 
   return (
     <section className="p-8 bg-gray-200 min-h-screen">
-      <h2 className="text-2xl font-semibold mb-4">Bienvenido @usuario</h2>
+      <h2 className="text-2xl font-semibold mb-4">{`Bienvenido ${user.f_name}`}</h2>
 
       {/*Filters Section*/}
       <div className="bg-white p-10 rounded-md shadow-sm mb-6">
@@ -87,11 +87,20 @@ export default function Courses() {
           {filteredCourses.map((course) => (
             /* Card */
             <Link key={course.id} to={course.url}>
-              <Cards title={course.title} srcImage={course.image} progress={course.progress} id={course.id} />
+              <Cards
+                title={course.title}
+                srcImage={course.image}
+                progress={course.progress}
+                id={course.id}
+              />
             </Link>
           ))}
 
-          {filteredCourses.length === 0 && <p className="col-span-full text-gray-500 text-center py-8">No se encontraron cursos.</p>}
+          {filteredCourses.length === 0 && (
+            <p className="col-span-full text-gray-500 text-center py-8">
+              No se encontraron cursos.
+            </p>
+          )}
         </div>
       </div>
     </section>

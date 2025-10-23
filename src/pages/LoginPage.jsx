@@ -16,13 +16,14 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const navigate = useNavigate()
-  const { login, isAuthenticated } = useAuth()
+  const { login, isAuthenticated, loading } = useAuth()
 
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/home')
+    if (!loading && isAuthenticated) {
+      const timer = setTimeout(() => navigate('/home'), 1000)
+      return () => clearTimeout(timer)
     }
-  }, [isAuthenticated, navigate])
+  }, [loading, isAuthenticated, navigate])
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberedEmail')
@@ -35,9 +36,8 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await login({ email, password }) // ✅ el contexto se encarga de todo
+      await login({ email, password })
 
-      // Guardar el correo si “Recuérdame” está activado
       if (remember) {
         localStorage.setItem('rememberedEmail', email)
       } else {
@@ -55,6 +55,20 @@ export default function LoginPage() {
     }, 4000)
     return () => clearInterval(interval)
   }, [])
+
+  if (loading || isAuthenticated) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen gap-6 ">
+        {/* Spinner */}
+        <div className="w-14 h-14 border-[6px] border-[#C1DFF7] border-t-[#37A5F2] rounded-full animate-spin"></div>
+
+        {/* Text */}
+        <p className="text-lg font-semibold tracking-wide drop-shadow-sm">
+          Validando datos...
+        </p>
+      </div>
+    )
+  }
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#e3e8ef] to-[#f8fafc] px-4">
