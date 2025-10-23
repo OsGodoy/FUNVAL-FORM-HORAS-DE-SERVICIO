@@ -1,78 +1,99 @@
 import { createContext, useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { postFunval, getFunval } from '../api/funval/services.js'
+import Cookies from 'js-cookie'
 
 const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+
+  /* Profile function */
+  const fetchUserProfile = async () => {
+    try {
+      const res = await getFunval('/auth/profile')
+      setUser(res.data)
+      Cookies.set('user', JSON.stringify(res.data), {
+        expires: 1,
+        sameSite: 'strict',
+        secure: true,
+      })
+      return res.data
+    } catch (error) {
+      setUser(null)
+      Cookies.remove('user')
+      return null
+    }
+  }
 
   /* Login */
   const login = async ({ email, password }) => {
     try {
       setLoading(true)
-      const response = await postFunval('/auth/login', { email, password })
-      if (response.data.status === 'success') {
-        const profileResponse = await getFunval('/auth/profile')
-        const p = profileResponse.data
-        const loggedUser = {
-          id: p.id,
-          name: p.f_name,
-          middlename: p.m_name,
-          lastname: p.f_lastname,
-          email: p.email,
-          phone: p.phone,
-          role: p.role_id === 1 ? 'admin' : 'client',
-          status: p.status,
-        }
-        setLoading(false)
-        setUser(loggedUser)
+      const res = await postFunval('/auth/login', { email, password })
 
-        navigate('/home')
+      if (res.data.status === 'success') {
+        const profile = await fetchUserProfile()
+        if (profile) {
+          navigate('/home')
+        }
       } else {
-        setLoading(false)
-        throw new Error(response.data.message || 'Error al iniciar sesión')
+        throw new Error(res.data.message || 'Error al iniciar sesión')
       }
     } catch (error) {
-      setLoading(false)
       console.error('Error en login:', error)
       throw error
+    } finally {
+      setLoading(false)
     }
   }
 
-  /* Log out */
+  /* Logout */
   const logout = async () => {
     try {
-      if (user?.token) {
-        await postFunval('/auth/logout', null, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        })
-      }
+      await postFunval('/auth/logout')
     } catch (error) {
       console.warn('Error cerrando sesión:', error)
     } finally {
       setUser(null)
+      Cookies.remove('user')
       navigate('/login')
     }
   }
 
-  /* Authenticated */
+  /* Coockie SetUp */
+  useEffect(() => {
+    const storedUser = Cookies.get('user')
+    if (storedUser) {
+      setUser(JSON.parse(storedUser))
+      setLoading(false)
+    } else {
+      setLoading(false)
+    }
+  }, [])
+
   const isAuthenticated = !!user
 
-  /* Loading page */
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-gray-500">Cargando...</p>
+      <div className="flex justify-center items-center h-screen bg-gray-50">
+        <p className="text-gray-500 text-lg">Verificando sesión...</p>
       </div>
     )
   }
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, isAuthenticated, loading }}
+      value={{
+        user,
+        login,
+        logout,
+        isAuthenticated,
+        fetchUserProfile,
+        loading,
+      }}
     >
       {children}
     </AuthContext.Provider>
