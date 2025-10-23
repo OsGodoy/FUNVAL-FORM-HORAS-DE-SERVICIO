@@ -10,8 +10,8 @@ export default function Sidebar({ collapsed, setCollapsed }) {
   const [menuItems, setMenuItems] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
-  const location = useLocation();
-  const { user: userSesion } = useAuth();
+  const location = useLocation()
+  const { user: userSesion } = useAuth()
 
   const toggleSubmenu = (name) => {
     setOpenSubmenu((prev) => (prev === name ? null : name))
@@ -41,9 +41,8 @@ export default function Sidebar({ collapsed, setCollapsed }) {
     }
   }
 
-  
   const filterMenuByRoleAndStatus = (items) => {
-    const userRole = userSesion?.role?.name?.toLowerCase();
+    const userRole = userSesion?.role?.name?.toLowerCase()
     if (!userRole) return []
 
     return items
@@ -126,8 +125,9 @@ export default function Sidebar({ collapsed, setCollapsed }) {
           title={collapsed ? 'Expandir' : 'Colapsar'}
         >
           <Icons.PanelLeftClose
-            className={`w-5 h-5 text-gray-600 transition-transform duration-300 ${collapsed ? 'rotate-180' : ''
-              }`}
+            className={`w-5 h-5 text-gray-600 transition-transform duration-300 ${
+              collapsed ? 'rotate-180' : ''
+            }`}
           />
         </button>
       </div>
@@ -149,9 +149,10 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                     onClick={() => toggleSubmenu(item.name)}
                     className={`w-full flex items-center gap-3 px-4 py-2 rounded-md transition 
                       ${collapsed ? 'justify-center' : ''}
-                      ${isParentActive
-                        ? 'bg-indigo-50 text-[#155CFD]'
-                        : 'text-gray-700 hover:bg-gray-100'
+                      ${
+                        isParentActive
+                          ? 'bg-indigo-50 text-[#155CFD]'
+                          : 'text-gray-700 hover:bg-gray-100'
                       }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -161,8 +162,9 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                           {item.name}
                         </span>
                         <Icons.ChevronDown
-                          className={`w-4 h-4 transition-transform duration-300 ${openSubmenu === item.name ? 'rotate-180' : ''
-                            }`}
+                          className={`w-4 h-4 transition-transform duration-300 ${
+                            openSubmenu === item.name ? 'rotate-180' : ''
+                          }`}
                         />
                       </>
                     )}
@@ -187,9 +189,10 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                                 key={child.name}
                                 to={child.url}
                                 className={`flex items-center gap-2 px-4 py-2 text-sm rounded-md transition
-                                  ${location.pathname === child.url
-                                    ? 'bg-blue-50 text-[#155CFD]'
-                                    : 'text-gray-600 hover:bg-gray-50'
+                                  ${
+                                    location.pathname === child.url
+                                      ? 'bg-blue-50 text-[#155CFD]'
+                                      : 'text-gray-600 hover:bg-gray-50'
                                   }`}
                               >
                                 <ChildIcon className="w-4 h-4" />
@@ -210,9 +213,10 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                 to={item.url}
                 className={`flex items-center gap-3 px-4 py-2 font-medium transition rounded-md
                   ${collapsed ? 'justify-center' : ''}
-                  ${location.pathname === item.url
-                    ? 'bg-blue-50 text-[#155CFD]'
-                    : 'text-gray-700 hover:bg-gray-100'
+                  ${
+                    location.pathname === item.url
+                      ? 'bg-blue-50 text-[#155CFD]'
+                      : 'text-gray-700 hover:bg-gray-100'
                   }`}
               >
                 <Icon className="w-5 h-5" />
