@@ -85,6 +85,10 @@ export default function DataTable({
     return `items-center  ${justify}`;
   };
 
+  const getNestedValue = (obj, keyPath) => {
+    return keyPath.split('.').reduce((acc, key) => acc?.[key], obj);
+  };
+
   return (
     <div className="w-full bg-white rounded-2xl shadow-md p-4 transition-all duration-300">
       <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
@@ -165,7 +169,7 @@ export default function DataTable({
                         ? getActionCellClass(header.aling)
                         : getAlingTextClass(header.aling)
                       }`}>
-                      {header.render ? header.render(row) : row[header.key]}
+                      {header.render ? header.render(row) : getNestedValue(row, header.key)}
                     </td>
                   ))}
                 </tr>
