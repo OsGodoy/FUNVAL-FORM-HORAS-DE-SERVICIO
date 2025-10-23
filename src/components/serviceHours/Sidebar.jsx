@@ -3,13 +3,15 @@ import * as Icons from 'lucide-react'
 import { getData } from '../../api/local/services'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useLocation } from 'react-router-dom'
+import { useAuth } from '../../contexts/Auth-context'
 
 export default function Sidebar({ collapsed, setCollapsed }) {
   const [openSubmenu, setOpenSubmenu] = useState(null)
   const [menuItems, setMenuItems] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
-  const location = useLocation()
+  const location = useLocation();
+  const { user: userSesion } = useAuth();
 
   const toggleSubmenu = (name) => {
     setOpenSubmenu((prev) => (prev === name ? null : name))
@@ -18,14 +20,51 @@ export default function Sidebar({ collapsed, setCollapsed }) {
   const getMenuItems = async () => {
     setIsLoading(true)
     try {
-      const response = await getData('/menus.json')
-      setMenuItems(response.data)
+      const cachedMenu = sessionStorage.getItem('menuItems')
+
+      if (cachedMenu) {
+        const parsed = JSON.parse(cachedMenu)
+        setMenuItems(parsed)
+      } else {
+        const response = await getData('/menus.json')
+        const data = response.data
+        const filtered = filterMenuByRoleAndStatus(data)
+
+        setMenuItems(filtered)
+        sessionStorage.setItem('menuItems', JSON.stringify(filtered))
+      }
     } catch (error) {
       setError(error)
       console.error('Error fetching menu items:', error)
     } finally {
       setIsLoading(false)
     }
+  }
+
+  
+  const filterMenuByRoleAndStatus = (items) => {
+    const userRole = userSesion?.role?.name?.toLowerCase();
+    if (!userRole) return []
+
+    return items
+      .filter(
+        (item) =>
+          item.status === true &&
+          item.deleted === false &&
+          item.roles?.includes(userRole)
+      )
+      .map((item) => {
+        if (item.children?.length) {
+          const children = item.children.filter(
+            (child) =>
+              child.status === true &&
+              child.deleted === false &&
+              child.roles?.includes(userRole)
+          )
+          return { ...item, children }
+        }
+        return item
+      })
   }
 
   useEffect(() => {
@@ -87,9 +126,8 @@ export default function Sidebar({ collapsed, setCollapsed }) {
           title={collapsed ? 'Expandir' : 'Colapsar'}
         >
           <Icons.PanelLeftClose
-            className={`w-5 h-5 text-gray-600 transition-transform duration-300 ${
-              collapsed ? 'rotate-180' : ''
-            }`}
+            className={`w-5 h-5 text-gray-600 transition-transform duration-300 ${collapsed ? 'rotate-180' : ''
+              }`}
           />
         </button>
       </div>
@@ -111,10 +149,9 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                     onClick={() => toggleSubmenu(item.name)}
                     className={`w-full flex items-center gap-3 px-4 py-2 rounded-md transition 
                       ${collapsed ? 'justify-center' : ''}
-                      ${
-                        isParentActive
-                          ? 'bg-indigo-50 text-[#155CFD]'
-                          : 'text-gray-700 hover:bg-gray-100'
+                      ${isParentActive
+                        ? 'bg-indigo-50 text-[#155CFD]'
+                        : 'text-gray-700 hover:bg-gray-100'
                       }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -124,9 +161,8 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                           {item.name}
                         </span>
                         <Icons.ChevronDown
-                          className={`w-4 h-4 transition-transform duration-300 ${
-                            openSubmenu === item.name ? 'rotate-180' : ''
-                          }`}
+                          className={`w-4 h-4 transition-transform duration-300 ${openSubmenu === item.name ? 'rotate-180' : ''
+                            }`}
                         />
                       </>
                     )}
@@ -151,10 +187,9 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                                 key={child.name}
                                 to={child.url}
                                 className={`flex items-center gap-2 px-4 py-2 text-sm rounded-md transition
-                                  ${
-                                    location.pathname === child.url
-                                      ? 'bg-blue-50 text-[#155CFD]'
-                                      : 'text-gray-600 hover:bg-gray-50'
+                                  ${location.pathname === child.url
+                                    ? 'bg-blue-50 text-[#155CFD]'
+                                    : 'text-gray-600 hover:bg-gray-50'
                                   }`}
                               >
                                 <ChildIcon className="w-4 h-4" />
@@ -175,10 +210,9 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                 to={item.url}
                 className={`flex items-center gap-3 px-4 py-2 font-medium transition rounded-md
                   ${collapsed ? 'justify-center' : ''}
-                  ${
-                    location.pathname === item.url
-                      ? 'bg-blue-50 text-[#155CFD]'
-                      : 'text-gray-700 hover:bg-gray-100'
+                  ${location.pathname === item.url
+                    ? 'bg-blue-50 text-[#155CFD]'
+                    : 'text-gray-700 hover:bg-gray-100'
                   }`}
               >
                 <Icon className="w-5 h-5" />
