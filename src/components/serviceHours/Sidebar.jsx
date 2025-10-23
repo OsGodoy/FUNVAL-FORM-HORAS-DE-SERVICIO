@@ -87,10 +87,8 @@ export default function Sidebar({ collapsed, setCollapsed }) {
           .map((item) => {
             const Icon = Icons[item.icon] || Icons.Circle;
 
-            // Saber si el padre tiene un hijo activo
             const isParentActive = item.children?.some((child) => child.url === location.pathname);
 
-            // --- Menú con submenús ---
             if (item.children) {
               return (
                 <div key={item.name}>
