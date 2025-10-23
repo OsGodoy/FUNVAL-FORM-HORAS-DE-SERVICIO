@@ -7,13 +7,26 @@ const client = axios.create({
   withCredentials: true,
 });
 
+function clearCookies() {
+  document.cookie.split(";").forEach(cookie => {
+    const [name] = cookie.split("=");
+    document.cookie = `${name.trim()}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  });
+}
+
+function handleLogout() {
+  console.warn("Sesión expirada o token inválido. Cerrando sesión...");
+  clearCookies();
+  localStorage.removeItem("isAuthenticated");
+  window.location.replace("/login"); 
+}
+
 client.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
       if (error.response.status === 401) {
-        console.warn("Sesión expirada o token inválido");
-        window.location.pathname = "/login";
+        handleLogout();
       } else if (error.response.status >= 500) {
         console.error("Error en el servidor:", error.response.statusText);
       }
