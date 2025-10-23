@@ -1,17 +1,17 @@
-import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
-import { useAuth } from '../../contexts/Auth-context'
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
+import { useAuth } from "../../contexts/Auth-context";
 
 export default function HeaderHome() {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const { user, logout } = useAuth()
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const navLinks = [
-    { name: 'Página Principal', path: '' },
-    { name: 'Área personal', path: '' },
-    { name: 'Mis cursos', path: '' },
-  ]
+    { name: "Página Principal", path: "" },
+    { name: "Área personal", path: "" },
+    { name: "Mis cursos", path: "" },
+  ];
 
   return (
     <header className="w-full bg-white shadow-sm px-6 py-3 flex justify-between items-center relative z-50">
@@ -33,7 +33,7 @@ export default function HeaderHome() {
               to={link.path}
               className={({ isActive }) =>
                 `hover:text-blue-600 ${
-                  isActive ? 'font-semibold text-black' : ''
+                  isActive ? "font-semibold text-black" : ""
                 }`
               }
             >
@@ -93,7 +93,7 @@ export default function HeaderHome() {
               strokeWidth={1.5}
               stroke="currentColor"
               className={`w-4 h-4 transition-transform duration-300 ${
-                userMenuOpen ? 'rotate-180' : ''
+                userMenuOpen ? "rotate-180" : ""
               }`}
             >
               <path
@@ -131,17 +131,17 @@ export default function HeaderHome() {
         >
           <span
             className={`block w-6 h-0.5 bg-gray-700 transition-all duration-300 ${
-              menuOpen ? 'rotate-45 translate-y-1.5' : ''
+              menuOpen ? "rotate-45 translate-y-1.5" : ""
             }`}
           ></span>
           <span
             className={`block w-6 h-0.5 bg-gray-700 my-1 transition-all duration-300 ${
-              menuOpen ? 'opacity-0' : ''
+              menuOpen ? "opacity-0" : ""
             }`}
           ></span>
           <span
             className={`block w-6 h-0.5 bg-gray-700 transition-all duration-300 ${
-              menuOpen ? '-rotate-45 -translate-y-1.5' : ''
+              menuOpen ? "-rotate-45 -translate-y-1.5" : ""
             }`}
           ></span>
         </button>
@@ -157,7 +157,7 @@ export default function HeaderHome() {
                 to={link.path}
                 className={({ isActive }) =>
                   `hover:text-blue-600 ${
-                    isActive ? 'font-semibold text-black' : ''
+                    isActive ? "font-semibold text-black" : ""
                   }`
                 }
                 onClick={() => setMenuOpen(false)}
@@ -169,5 +169,5 @@ export default function HeaderHome() {
         </div>
       )}
     </header>
-  )
+  );
 }
