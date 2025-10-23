@@ -16,7 +16,7 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const navigate = useNavigate()
-  const { login, isAuthenticated, loading } = useAuth()
+  const { login, isAuthenticated, loading, authenticating } = useAuth()
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
@@ -35,6 +35,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setErrorMsg('')
     try {
       await login({ email, password })
 
@@ -56,14 +57,11 @@ export default function LoginPage() {
     return () => clearInterval(interval)
   }, [])
 
-  if (loading || isAuthenticated) {
+  if (loading || authenticating || isAuthenticated) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen gap-6 ">
-        {/* Spinner */}
+      <div className="flex flex-col justify-center items-center h-screen gap-6">
         <div className="w-14 h-14 border-[6px] border-[#C1DFF7] border-t-[#37A5F2] rounded-full animate-spin"></div>
-
-        {/* Text */}
-        <p className="text-lg font-semibold tracking-wide drop-shadow-sm">
+        <p className="text-lg font-semibold tracking-wide text-white">
           Validando datos...
         </p>
       </div>
