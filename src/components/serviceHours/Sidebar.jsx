@@ -3,6 +3,7 @@ import * as Icons from 'lucide-react'
 import { getData } from '../../api/local/services'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useLocation } from 'react-router-dom'
+import { useAuth } from '../../contexts/Auth-context'
 
 export default function Sidebar({ collapsed, setCollapsed }) {
   const [openSubmenu, setOpenSubmenu] = useState(null)
@@ -10,6 +11,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
   const location = useLocation()
+  const { user: userSesion } = useAuth()
 
   const toggleSubmenu = (name) => {
     setOpenSubmenu((prev) => (prev === name ? null : name))
@@ -18,14 +20,50 @@ export default function Sidebar({ collapsed, setCollapsed }) {
   const getMenuItems = async () => {
     setIsLoading(true)
     try {
-      const response = await getData('/menus.json')
-      setMenuItems(response.data)
+      const cachedMenu = sessionStorage.getItem('menuItems')
+
+      if (cachedMenu) {
+        const parsed = JSON.parse(cachedMenu)
+        setMenuItems(parsed)
+      } else {
+        const response = await getData('/menus.json')
+        const data = response.data
+        const filtered = filterMenuByRoleAndStatus(data)
+
+        setMenuItems(filtered)
+        sessionStorage.setItem('menuItems', JSON.stringify(filtered))
+      }
     } catch (error) {
       setError(error)
       console.error('Error fetching menu items:', error)
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const filterMenuByRoleAndStatus = (items) => {
+    const userRole = userSesion?.role?.name?.toLowerCase()
+    if (!userRole) return []
+
+    return items
+      .filter(
+        (item) =>
+          item.status === true &&
+          item.deleted === false &&
+          item.roles?.includes(userRole)
+      )
+      .map((item) => {
+        if (item.children?.length) {
+          const children = item.children.filter(
+            (child) =>
+              child.status === true &&
+              child.deleted === false &&
+              child.roles?.includes(userRole)
+          )
+          return { ...item, children }
+        }
+        return item
+      })
   }
 
   useEffect(() => {
