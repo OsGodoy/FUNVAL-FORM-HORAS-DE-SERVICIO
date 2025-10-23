@@ -9,6 +9,7 @@ import CategoriesPage from "../pages/CategoriesPage";
 import SchoolsPage from "../pages/SchoolsPage";
 import UsersPage from "../pages/UsersPage";
 import UserFormPage from "../pages/UserFormPage";
+import StudentsPage from "../pages/StudensPage";
 
 
 export default function AppRouter() {
@@ -22,6 +23,7 @@ export default function AppRouter() {
 
       <Route element={<ServiceHourLayout />}>
         <Route path="/roles" element={<RolesPage />} />
+        <Route path="/students" element={<StudentsPage />} />
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/schools" element={<SchoolsPage />} />
         <Route path="/users" element={<UsersPage />} />
