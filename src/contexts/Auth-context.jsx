@@ -8,6 +8,7 @@ const AuthContext = createContext()
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [authenticating, setAuthenticating] = useState(false)
   const navigate = useNavigate()
 
   /* Profile function */
@@ -18,7 +19,7 @@ export function AuthProvider({ children }) {
       Cookies.set('user', JSON.stringify(res.data), {
         expires: 1,
         sameSite: 'strict',
-        secure: true,
+        secure: window.location.protocol === 'https:',
       })
       return res.data
     } catch (error) {
@@ -31,22 +32,20 @@ export function AuthProvider({ children }) {
   /* Login */
   const login = async ({ email, password }) => {
     try {
-      setLoading(true)
+      setAuthenticating(true)
       const res = await postFunval('/auth/login', { email, password })
 
       if (res.data.status === 'success') {
         const profile = await fetchUserProfile()
-        if (profile) {
-          navigate('/home')
-        }
+        return profile
       } else {
-        throw new Error(res.data.message || 'Error al iniciar sesión')
+        return null
       }
     } catch (error) {
       console.error('Error en login:', error)
-      throw error
+      return null
     } finally {
-      setLoading(false)
+      setAuthenticating(false)
     }
   }
 
@@ -59,6 +58,7 @@ export function AuthProvider({ children }) {
     } finally {
       setUser(null)
       Cookies.remove('user')
+      sessionStorage.clear()
       navigate('/login')
     }
   }
@@ -68,15 +68,13 @@ export function AuthProvider({ children }) {
     const storedUser = Cookies.get('user')
     if (storedUser) {
       setUser(JSON.parse(storedUser))
-      setLoading(false)
-    } else {
-      setLoading(false)
     }
+    setLoading(false)
   }, [])
 
   const isAuthenticated = !!user
 
-  if (loading) {
+  if (loading && !authenticating) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-50">
         <p className="text-gray-500 text-lg">Verificando sesión...</p>
@@ -93,6 +91,7 @@ export function AuthProvider({ children }) {
         isAuthenticated,
         fetchUserProfile,
         loading,
+        authenticating,
       }}
     >
       {children}
