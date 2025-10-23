@@ -82,7 +82,7 @@ export default function DataTable({
     let justify = "justify-start";
     if (align === "center") justify = "justify-center";
     if (align === "right") justify = "justify-end";
-    return `flex items-center gap-2 ${justify}`;
+    return `items-center  ${justify}`;
   };
 
   return (
