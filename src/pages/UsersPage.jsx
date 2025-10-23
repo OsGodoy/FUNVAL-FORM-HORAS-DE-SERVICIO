@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "../components/shared/ConfirmDialog";
 import { Pencil, PlusCircle, Trash2, UserCheck, UserX } from "lucide-react";
 
-
 export default function UsersPage() {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
