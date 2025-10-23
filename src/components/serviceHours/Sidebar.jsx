@@ -143,7 +143,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
               (child) => child.url === location.pathname
             )
 
-            if (item.children) {
+            if (item.children && item.children.length > 0)  {
               return (
                 <div key={item.name}>
                   <button

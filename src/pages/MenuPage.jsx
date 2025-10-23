@@ -133,6 +133,7 @@ export default function MenuPage() {
     name: item.name,
     description: item.description,
     url: item.url || '—',
+    icon: item.icon || '—',
     roles: item.roles?.join(', ') || '—',
     type: item.type,
     parent: item.parent || '—',
@@ -172,6 +173,7 @@ export default function MenuPage() {
           headers={[
             { key: 'name', label: 'Nombre' },
             { key: 'description', label: 'Descripción' },
+            { key: 'icon', label: 'Icono', icon: true },
             { key: 'url', label: 'URL' },
             { key: 'type', label: 'Tipo' },
             {

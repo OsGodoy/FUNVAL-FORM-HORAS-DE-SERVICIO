@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Search, ChevronLeft, ChevronRight, FileSpreadsheet, ChevronsLeft, ChevronsRight } from "lucide-react";
 import * as XLSX from "xlsx";
+import * as Icons from 'lucide-react'
 import toast from "react-hot-toast";
 
 export default function DataTable({
@@ -85,9 +86,23 @@ export default function DataTable({
     return `items-center  ${justify}`;
   };
 
-  const getNestedValue = (obj, keyPath) => {
-    return keyPath.split('.').reduce((acc, key) => acc?.[key], obj);
+  const getCellValue = (row, header) => {
+    if (header.icon) {
+      const IconComponent = Icons[row[header.key]] || Icons.Circle;
+      return (
+        <div className="flex justify-center items-center">
+          <IconComponent size={18} className="text-gray-700" />
+        </div>
+      );
+    }
+
+    if (header.render) {
+      return header.render(row);
+    }
+
+    return header.key.split('.').reduce((acc, key) => acc?.[key], row);
   };
+
 
   return (
     <div className="w-full bg-white rounded-2xl shadow-md p-4 transition-all duration-300">
@@ -166,10 +181,10 @@ export default function DataTable({
                 <tr key={idx} className="hover:bg-gray-50 transition-colors border-t">
                   {headers.map((header) => (
                     <td key={header.key} className={`px-4 py-2 ${header.render
-                        ? getActionCellClass(header.aling)
-                        : getAlingTextClass(header.aling)
+                      ? getActionCellClass(header.aling)
+                      : getAlingTextClass(header.aling)
                       }`}>
-                      {header.render ? header.render(row) : getNestedValue(row, header.key)}
+                      {getCellValue(row, header)}
                     </td>
                   ))}
                 </tr>
@@ -185,83 +200,81 @@ export default function DataTable({
         </table>
       </div>
 
-<div className="flex justify-between items-center mt-4 text-sm text-gray-600">
-  <p>
-    Página {page} de {totalPages || 1}
-  </p>
+      <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
+        <p>
+          Página {page} de {totalPages || 1}
+        </p>
 
-  <div className="flex gap-1 items-center">
-    {/* Ir al inicio */}
-    <button
-      onClick={() => setPage(1)}
-      disabled={page === 1}
-      className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition"
-      title="Primera página"
-    >
-      <ChevronsLeft size={18} />
-    </button>
+        <div className="flex gap-1 items-center">
+          
+          <button
+            onClick={() => setPage(1)}
+            disabled={page === 1}
+            className={`${page === 1 ? '':'cursor-pointer'} p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition`}
+            title="Primera página"
+          >
+            <ChevronsLeft size={18} />
+          </button>
 
-    {/* Página anterior */}
-    <button
-      onClick={() => setPage((p) => Math.max(p - 1, 1))}
-      disabled={page === 1}
-      className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition"
-      title="Página anterior"
-    >
-      <ChevronLeft size={18} />
-    </button>
+          
+          <button
+            onClick={() => setPage((p) => Math.max(p - 1, 1))}
+            disabled={page === 1}
+            className={`${page === 1 ? '': 'cursor-pointer'} p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition`}
+            title="Página anterior"
+          >
+            <ChevronLeft size={18} />
+          </button>
 
-    {/* Botones numéricos dinámicos */}
-    {(() => {
-      const visibleButtons = 3;
-      let start = Math.max(1, page - 1);
-      let end = Math.min(totalPages, start + visibleButtons - 1);
+         
+          {(() => {
+            const visibleButtons = 3;
+            let start = Math.max(1, page - 1);
+            let end = Math.min(totalPages, start + visibleButtons - 1);
 
-      if (end - start + 1 < visibleButtons) {
-        start = Math.max(1, end - visibleButtons + 1);
-      }
+            if (end - start + 1 < visibleButtons) {
+              start = Math.max(1, end - visibleButtons + 1);
+            }
 
-      const pagesToShow = [];
-      for (let i = start; i <= end; i++) {
-        pagesToShow.push(i);
-      }
+            const pagesToShow = [];
+            for (let i = start; i <= end; i++) {
+              pagesToShow.push(i);
+            }
 
-      return pagesToShow.map((pNum) => (
-        <button
-          key={pNum}
-          onClick={() => setPage(pNum)}
-          className={`px-3 py-1 rounded-lg border transition-all ${
-            page === pNum
-              ? "bg-blue-600 text-white border-blue-600"
-              : "border-gray-300 hover:bg-gray-100"
-          }`}
-        >
-          {pNum}
-        </button>
-      ));
-    })()}
+            return pagesToShow.map((pNum) => (
+              <button
+                key={pNum}
+                onClick={() => setPage(pNum)}
+                className={`cursor-pointer px-3 py-1 rounded-lg border transition-all ${page === pNum
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "border-gray-300 hover:bg-gray-100"
+                  }`}
+              >
+                {pNum}
+              </button>
+            ));
+          })()}
 
-    {/* Página siguiente */}
-    <button
-      onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-      disabled={page === totalPages}
-      className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition"
-      title="Página siguiente"
-    >
-      <ChevronRight size={18} />
-    </button>
+        
+          <button
+            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+            disabled={page === totalPages}
+            className={`${page === totalPages ? '':'cursor-pointer'} p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition`}
+            title="Página siguiente"
+          >
+            <ChevronRight size={18} />
+          </button>
 
-    {/* Ir al final */}
-    <button
-      onClick={() => setPage(totalPages)}
-      disabled={page === totalPages}
-      className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition"
-      title="Última página"
-    >
-      <ChevronsRight size={18} />
-    </button>
-  </div>
-</div>
+          <button
+            onClick={() => setPage(totalPages)}
+            disabled={page === totalPages}
+            className={`${page === totalPages ? '': 'cursor-pointer'} p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition`}
+            title="Última página"
+          >
+            <ChevronsRight size={18} />
+          </button>
+        </div>
+      </div>
 
     </div>
   );
