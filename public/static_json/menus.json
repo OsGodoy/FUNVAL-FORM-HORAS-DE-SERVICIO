@@ -5,7 +5,10 @@
     "url": "/schools",
     "roles": ["Admin", "Student"],
     "order": 3,
-    "icon": "School"
+    "icon": "School",
+    "status": true,
+    "deleted": false,
+    "deleted_at": null
   },
   {
     "name": "Servicios",
@@ -13,7 +16,10 @@
     "url": "/service-hours",
     "roles": ["Admin", "Student"],
     "order": 1,
-    "icon": "Briefcase"
+    "icon": "Briefcase",
+    "status": true,
+    "deleted": false,
+    "deleted_at": null
   },
   {
     "name": "Estudiantes",
@@ -21,7 +27,10 @@
     "url": "/students",
     "roles": ["Admin", "Student"],
     "order": 2,
-    "icon": "GraduationCap"
+    "icon": "GraduationCap",
+    "status": true,
+    "deleted": false,
+    "deleted_at": null
   },
   {
     "name": "Configuración",
@@ -30,6 +39,9 @@
     "roles": ["Admin"],
     "order": 4,
     "icon": "Settings",
+    "status": true,
+    "deleted": false,
+    "deleted_at": null,
     "children": [
       {
         "name": "Menús",
@@ -37,7 +49,10 @@
         "url": "/configuracion/menus",
         "roles": ["Admin"],
         "order": 1,
-        "icon": "MenuSquare"
+        "icon": "MenuSquare",
+        "status": true,
+        "deleted": false,
+        "deleted_at": null
       },
       {
         "name": "Permisos",
@@ -45,7 +60,10 @@
         "url": "/configuracion/permissions",
         "roles": ["Admin"],
         "order": 2,
-        "icon": "KeyRound"
+        "icon": "KeyRound",
+        "status": true,
+        "deleted": false,
+        "deleted_at": null
       },
 
       {
@@ -54,7 +72,10 @@
         "url": "/categories",
         "roles": ["Admin", "Student"],
         "order": 3,
-        "icon": "LayoutList"
+        "icon": "LayoutList",
+        "status": true,
+        "deleted": false,
+        "deleted_at": null
       },
       {
         "name": "Roles",
@@ -62,7 +83,10 @@
         "url": "/roles",
         "roles": ["Admin"],
         "order": 4,
-        "icon": "Shield"
+        "icon": "Shield",
+        "status": true,
+        "deleted": false,
+        "deleted_at": null
       },
       {
         "name": "Usuarios",
@@ -70,7 +94,10 @@
         "url": "/users",
         "roles": ["Admin"],
         "order": 5,
-        "icon": "Users"
+        "icon": "Users",
+        "status": true,
+        "deleted": false,
+        "deleted_at": null
       }
     ]
   }
