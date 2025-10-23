@@ -57,7 +57,7 @@ export default function UsersPage() {
   const handleCancelDelete = () => {
     setConfirmDialogOpen(false);
     setIdUserToDelete(null);
-  }; 
+  };
   useEffect(() => {
     getUsers();
   }, []);
@@ -97,12 +97,26 @@ export default function UsersPage() {
             { key: "role.name", label: "Rol" },
             { key: "email", label: "Correo" },
             { key: "phone", label: "Teléfono" },
-            { key: "status",
+            {
+              key: "status",
               aling: "center",
-               label: "Estado",
-                render: (row) => (
-                 row.status === 'activo' ? <UserCheck color="green" /> : <UserX color="gray" />
-              ), 
+              label: "Estado",
+              render: (row) => (
+                row.status === 'activo' ?
+                  <div className="relative group inline-block">
+                    <UserCheck color="green" />
+                    <span className="absolute w-15 text-center -top-6 left-1/2 -translate-x-1/2 bg-gray-800/60 text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-200">
+                      Activo
+                    </span>
+                  </div>
+                  :
+                  <div className="relative group inline-block">
+                    <UserX color="gray" />
+                    <span className="absolute w-15 text-center -top-6 left-1/2 -translate-x-1/2 bg-gray-800/60 text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-200">
+                      Inactivo
+                    </span>
+                  </div>
+              ),
             },
             {
               key: "actions",

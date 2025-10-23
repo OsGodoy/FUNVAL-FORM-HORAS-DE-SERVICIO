@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, ChevronLeft, ChevronRight, FileSpreadsheet } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, FileSpreadsheet, ChevronsLeft, ChevronsRight } from "lucide-react";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
 
@@ -181,27 +181,84 @@ export default function DataTable({
         </table>
       </div>
 
-      <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
-        <p>
-          Página {page} de {totalPages || 1}
-        </p>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setPage((p) => Math.max(p - 1, 1))}
-            disabled={page === 1}
-            className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40"
-          >
-            <ChevronLeft size={18} />
-          </button>
-          <button
-            onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-            disabled={page === totalPages}
-            className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40"
-          >
-            <ChevronRight size={18} />
-          </button>
-        </div>
-      </div>
+<div className="flex justify-between items-center mt-4 text-sm text-gray-600">
+  <p>
+    Página {page} de {totalPages || 1}
+  </p>
+
+  <div className="flex gap-1 items-center">
+    {/* Ir al inicio */}
+    <button
+      onClick={() => setPage(1)}
+      disabled={page === 1}
+      className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition"
+      title="Primera página"
+    >
+      <ChevronsLeft size={18} />
+    </button>
+
+    {/* Página anterior */}
+    <button
+      onClick={() => setPage((p) => Math.max(p - 1, 1))}
+      disabled={page === 1}
+      className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition"
+      title="Página anterior"
+    >
+      <ChevronLeft size={18} />
+    </button>
+
+    {/* Botones numéricos dinámicos */}
+    {(() => {
+      const visibleButtons = 3;
+      let start = Math.max(1, page - 1);
+      let end = Math.min(totalPages, start + visibleButtons - 1);
+
+      if (end - start + 1 < visibleButtons) {
+        start = Math.max(1, end - visibleButtons + 1);
+      }
+
+      const pagesToShow = [];
+      for (let i = start; i <= end; i++) {
+        pagesToShow.push(i);
+      }
+
+      return pagesToShow.map((pNum) => (
+        <button
+          key={pNum}
+          onClick={() => setPage(pNum)}
+          className={`px-3 py-1 rounded-lg border transition-all ${
+            page === pNum
+              ? "bg-blue-600 text-white border-blue-600"
+              : "border-gray-300 hover:bg-gray-100"
+          }`}
+        >
+          {pNum}
+        </button>
+      ));
+    })()}
+
+    {/* Página siguiente */}
+    <button
+      onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+      disabled={page === totalPages}
+      className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition"
+      title="Página siguiente"
+    >
+      <ChevronRight size={18} />
+    </button>
+
+    {/* Ir al final */}
+    <button
+      onClick={() => setPage(totalPages)}
+      disabled={page === totalPages}
+      className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition"
+      title="Última página"
+    >
+      <ChevronsRight size={18} />
+    </button>
+  </div>
+</div>
+
     </div>
   );
 }
