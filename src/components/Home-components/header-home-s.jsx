@@ -2,11 +2,13 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../contexts/Auth-context";
 import ChangePassword from "../shared/ChangePassword";
+import UpdateUssers from "../shared/UpdateUssers";
 
 export default function HeaderHome() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const { user, logout } = useAuth();
 
   const navLinks = [
@@ -100,7 +102,16 @@ export default function HeaderHome() {
                       setUserMenuOpen(false);
                     }}
                   >
-                    Ver perfil
+                    Cambiar contraseña
+                  </li>
+                  <li
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      setShowUpdateModal(true);
+                      setUserMenuOpen(false);
+                    }}
+                  >
+                    Actualizar Perfil
                   </li>
                   <li className="px-4 py-2 text-red-600 hover:bg-gray-100 cursor-pointer" onClick={() => logout()}>
                     Cerrar sesión
@@ -137,6 +148,7 @@ export default function HeaderHome() {
         )}
       </header>
       <ChangePassword isOpen={showPasswordModal} onClose={() => setShowPasswordModal(false)} />
+      <UpdateUssers isOpen={showUpdateModal} onClose={() => setShowUpdateModal(false)} />
     </>
   );
 }
