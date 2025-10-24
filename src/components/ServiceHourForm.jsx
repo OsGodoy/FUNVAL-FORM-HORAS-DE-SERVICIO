@@ -81,7 +81,7 @@ export default function ServiceHourForm() {
   return (
     <>
       <motion.section
-        className="w-70 sm:w-140 md:w-165 lg:w-235 p-4 rounded-lg gap-4 flex flex-col lg:flex-row items-center justify-center"
+        className="w-70 sm:w-140 md:w-165 lg:w-235 xl:w-250 2xl:w-280 p-4 rounded-lg gap-4 flex flex-col lg:flex-row items-center justify-center"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -147,14 +147,14 @@ export default function ServiceHourForm() {
               </div>
 
               <motion.section
-                className="w-full p-4 rounded-lg border-2 border-blue-500 gap-2 flex flex-col md:flex-row items-center justify-center md:relative md:h-85"
+                className="w-full p-4 rounded-lg border-2 border-blue-500 gap-2 flex flex-col md:flex-row items-center justify-center md:relative md:h-85 xl:h-100"
                 layout
               >
                 <motion.div
                   layout
                   className={`flex flex-col items-center justify-center md:absolute duration-300 ${
                     toggleInfo
-                      ? "md:-translate-x-40 lg:-translate-x-32"
+                      ? "md:-translate-x-40 lg:-translate-x-32 xl:-translate-x-35"
                       : "md:translate-0"
                   }`}
                 >
@@ -172,7 +172,11 @@ export default function ServiceHourForm() {
                           selectedCategory?.id === category.id
                             ? "bg-blue-500 text-white border-blue-500"
                             : "bg-blue-100 text-blue-500 border-blue-500"
-                        } ${toggleInfo ? "lg:truncate lg:w-40" : "lg:w-auto"}`}
+                        } ${
+                          toggleInfo
+                            ? "lg:truncate lg:w-40 2xl:w-52"
+                            : "lg:w-auto"
+                        }`}
                       >
                         {category.name}
                       </motion.li>
@@ -180,7 +184,6 @@ export default function ServiceHourForm() {
                   </ul>
                 </motion.div>
 
-               
                 <AnimatePresence>
                   {toggleInfo && (
                     <motion.section
@@ -189,9 +192,9 @@ export default function ServiceHourForm() {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.9 }}
                       transition={{ duration: 0.3 }}
-                      className="bg-blue-950/80 md:bg-blue-950/0 h-full md:h-72 w-full md:w-75 lg:w-60 absolute inset-0 rounded-lg p-4 md:p-0 md:top-6 md:left-76 lg:left-46 flex items-center justify-center"
+                      className="bg-blue-950/80 md:bg-blue-950/0 h-full md:h-72 w-full md:w-75 lg:w-60 xl:w-65 absolute inset-0 p-4 md:p-0 md:top-6 xl:top-14 md:left-76 lg:left-46 xl:left-50 2xl:left-62 flex items-center justify-center"
                     >
-                      <div className="w-full sm:w-100 h-80 md:h-full bg-white rounded-lg p-4 text-base flex flex-col items-center justify-center relative shadow-lg">
+                      <div className="w-80 sm:w-100 h-80 md:h-full bg-white rounded-lg p-4 text-base flex flex-col items-center justify-center relative shadow-lg">
                         <h3 className="text-center text-blue-500 font-medium">
                           {selectedCategory?.name}:
                         </h3>
@@ -249,7 +252,6 @@ export default function ServiceHourForm() {
           </form>
         </motion.div>
 
-        
         <motion.section
           className="hidden w-[50%] h-full border-2 border-blue-500 rounded-lg lg:flex items-center justify-center relative"
           initial={{ opacity: 0, x: 50 }}
@@ -269,7 +271,7 @@ export default function ServiceHourForm() {
               animate={{ opacity: 1 }}
             />
           )}
-          <div className="h-160 w-full flex flex-col items-center justify-center">
+          <div className="h-160 xl:h-175 w-full flex flex-col items-center justify-center">
             <p
               className={`mt-1 font-bold ${
                 fileName !== "Ningún archivo seleccionado"
