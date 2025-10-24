@@ -13,7 +13,7 @@ export default function ServicesListPage() {
   const { user: userSession } = useAuth();
 
   const [serviList, setServiList] = useState([]);
-  const [isReviewMode, setIsReviewMode] = useState(false);  
+  const [isReviewMode, setIsReviewMode] = useState(false);
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,7 +25,7 @@ export default function ServicesListPage() {
   const [status, setStatus] = useState("Approved");
   const [loading, setLoading] = useState(false);
 
- 
+
   const getServices = async () => {
     try {
       const response = await getFunval("/services");
@@ -35,7 +35,6 @@ export default function ServicesListPage() {
       toast.error("Error al cargar los servicios");
     }
   };
-
 
   const getEvidence = async (id_evidence, serviceId, isReview) => {
     setLoading(true);
@@ -52,7 +51,7 @@ export default function ServicesListPage() {
       setSelectedServiceId(serviceId);
       setIsModalOpen(true);
     } catch (error) {
-      const errorMessage =`Detalle: ${error.response?.data?.message || error.message}` ;
+      const errorMessage = `Detalle: ${error.response?.data?.message || error.message}`;
       console.error("Error fetching evidence:", error);
       toast.error(`Error al cargar la evidencia. ${errorMessage}`);
       setSelectedServiceId(serviceId);
@@ -61,7 +60,6 @@ export default function ServicesListPage() {
       setLoading(false);
     }
   };
-
 
   const closeModal = () => {
     if (pdfUrl) URL.revokeObjectURL(pdfUrl);
@@ -72,7 +70,6 @@ export default function ServicesListPage() {
     setComment("");
     setStatus("Approved");
   };
-
 
   const handleReview = async () => {
     if (!approvedHours || !status) {
@@ -123,13 +120,100 @@ export default function ServicesListPage() {
 
   const handleStatusChange = (e) => {
     setStatus(e.target.value);
-    if (e.target.value === '2') setApprovedHours("0");
-  }
+    if (e.target.value === "2") setApprovedHours("0");
+  };
 
   const handleApprovedHoursChange = (e) => {
     setApprovedHours(e.target.value);
     if (Number(e.target.value) > 0) setStatus("1");
-  }
+  };
+
+  const columsHeaders = userSession.role?.name === 'Admin' ?
+    [
+      { key: "id", label: "#" },
+      { key: "user.full_name", label: "Usuario" },
+      { key: "category.name", label: "Servicio" },
+      { key: "amount_reported", label: "Horas reportadas" },
+      {
+        key: "status",
+        label: "Estado",
+        render: (row) => {
+          const style = statusStyles[row.status || "Pending"] || {};
+          return (
+            <span
+              className={`px-2 py-1 rounded-lg font-semibold text-sm ${style.bg} ${style.color}`}
+            >
+              {style.label || row.status}
+            </span>
+          );
+        },
+      },
+      { key: "amount_approved", label: "Horas aprobadas" },
+      { key: "comment", label: "Comentarios" },
+      {
+        key: "evidence",
+        label: "Evidencia",
+        render: (row) =>
+          row.evidence ? (
+            <button
+              onClick={() => getEvidence(row.evidence, row.id, row.status === 'Pending')}
+              className={`cursor-pointer ${row.status === 'Pending' ? 'text-orange-500 hover:text-orange-700' : 'text-blue-600 hover:text-blue-800'} font-semibold underline`}
+            >
+              {row.status === 'Pending' && userSession.role?.name === 'Admin' ? 'Revisar' : 'Ver PDF'}
+            </button>
+          ) : (
+            <span className="text-gray-400 italic">Sin evidencia</span>
+          ),
+      },
+      {
+        key: "created_at",
+        label: "Fecha creación",
+        render: (row) => formatDate(row.created_at),
+      },
+      {
+        key: "updated_at",
+        label: "Fecha actualización",
+        render: (row) => formatDate(row.updated_at),
+      },
+    ]
+    :
+    [
+      { key: "id", label: "#" },
+      { key: "user.full_name", label: "Usuario" },
+      { key: "category.name", label: "Servicio" },
+      { key: "amount_reported", label: "Horas reportadas" },
+      {
+        key: "status",
+        label: "Estado",
+        render: (row) => {
+          const style = statusStyles[row.status || "Pending"] || {};
+          return (
+            <span
+              className={`px-2 py-1 rounded-lg font-semibold text-sm ${style.bg} ${style.color}`}
+            >
+              {style.label || row.status}
+            </span>
+          );
+        },
+      },
+      {
+        key: "evidence",
+        label: "Evidencia",
+        render: (row) =>
+          row.evidence ? (
+            <button
+              onClick={() => getEvidence(row.evidence, row.id, row.status === 'Pending')}
+              className={`cursor-pointer ${row.status === 'Pending' ? 'text-orange-500 hover:text-orange-700' : 'text-blue-600 hover:text-blue-800'} font-semibold underline`}
+            >
+              {row.status === 'Pending' && userSession.role?.name === 'Admin' ? 'Revisar' : 'Ver PDF'}
+            </button>
+          ) : (
+            <span className="text-gray-400 italic">Sin evidencia</span>
+          ),
+      },
+      { key: "amount_approved", label: "Horas aprobadas" },
+      { key: "comment", label: "Comentarios" }
+    ];
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -143,7 +227,7 @@ export default function ServicesListPage() {
       >
         <h1 className="text-3xl font-bold text-gray-800">{userSession.role?.name === 'Admin' ? 'Lista de horas de servicio' : 'Mis horas de servicio'}</h1>
 
-       {userSession.role?.name === 'Student' && <motion.button
+        {userSession.role?.name === 'Student' && <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.97 }}
           onClick={handleCreateNew}
@@ -156,53 +240,7 @@ export default function ServicesListPage() {
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
         <DataTable
-          headers={[
-            { key: "id", label: "#" },
-            { key: "user.full_name", label: "Usuario" },
-            { key: "category.name", label: "Servicio" },
-            { key: "amount_reported", label: "Horas reportadas" },
-            {
-              key: "status",
-              label: "Estado",
-              render: (row) => {
-                const style = statusStyles[row.status || "Pending"] || {};
-                return (
-                  <span
-                    className={`px-2 py-1 rounded-lg font-semibold text-sm ${style.bg} ${style.color}`}
-                  >
-                    {style.label || row.status}
-                  </span>
-                );
-              },
-            },
-            { key: "amount_approved", label: "Horas aprobadas" },
-            { key: "comment", label: "Comentarios" },
-            {
-              key: "evidence",
-              label: "Evidencia",
-              render: (row) =>
-                row.evidence ? (
-                  <button
-                    onClick={() => getEvidence(row.evidence, row.id, row.status === 'Pending')}
-                    className={`cursor-pointer ${row.status === 'Pending' ? 'text-orange-500 hover:text-orange-700':'text-blue-600 hover:text-blue-800'} font-semibold underline`}
-                  >
-                   {row.status === 'Pending' ? 'Revisar': 'Ver PDF'} 
-                  </button>
-                ) : (
-                  <span className="text-gray-400 italic">Sin evidencia</span>
-                ),
-            },
-            {
-              key: "created_at",
-              label: "Fecha creación",
-              render: (row) => formatDate(row.created_at),
-            },
-            {
-              key: "updated_at",
-              label: "Fecha actualización",
-              render: (row) => formatDate(row.updated_at),
-            },
-          ]}
+          headers={columsHeaders}
           data={serviList}
           pageSize={10}
         />
@@ -243,58 +281,58 @@ export default function ServicesListPage() {
                     <iframe
                       src={pdfUrl}
                       title="Evidencia PDF"
-                      className={` ${ isReviewMode ? 'w-[60%]' : ' w-full'} h-[50vh] border rounded-lg mb-4`}
+                      className={` ${isReviewMode && userSession.role?.name === 'Admin' ? 'w-[60%]' : ' w-full'} h-[50vh] border rounded-lg mb-4`}
                     />
                   )
-                  : (
-                    <div className={` ${ isReviewMode ? 'w-[60%]': 'w-full'} flex justify-center items-center h-[50vh] border border-gray-300 rounded-lg mb-4`}>
-                      <span className="text-gray-500 italic">No hay evidencia disponible</span>
+                    : (
+                      <div className={` ${isReviewMode && userSession.role?.name === 'Admin' ? 'w-[60%]' : 'w-full'} flex justify-center items-center h-[50vh] border border-gray-300 rounded-lg mb-4`}>
+                        <span className="text-gray-500 italic">No hay evidencia disponible</span>
+                      </div>
+                    )}
+
+                  {isReviewMode && userSession.role?.name === 'Admin' && (
+                    <div className="flex flex-col gap-4 w-[40%] ">
+                      <input
+                        type="number"
+                        min="0"
+                        value={approvedHours}
+                        onChange={handleApprovedHoursChange}
+                        placeholder="Horas aprobadas"
+                        className="border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+                      />
+
+                      <textarea
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Comentarios"
+                        className="border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+                        rows="6"
+                      />
+
+                      <select
+                        value={status}
+                        onChange={handleStatusChange}
+                        className="border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+                      >
+                        <option value="1">Aprobado</option>
+                        <option value="2">Rechazado</option>
+                      </select>
+
+                      <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleReview}
+                        disabled={loading}
+                        className="cursor-pointer bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="animate-spin" size={20} /> Enviando...
+                          </>
+                        ) : (
+                          "Enviar revisión"
+                        )}
+                      </motion.button>
                     </div>
-                  )}
-
-                  {isReviewMode && (
-                  <div className="flex flex-col gap-4 w-[40%] ">
-                    <input
-                      type="number"
-                      min="0"
-                      value={approvedHours}
-                      onChange={handleApprovedHoursChange}
-                      placeholder="Horas aprobadas"
-                      className="border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
-                    />
-
-                    <textarea
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                      placeholder="Comentarios"
-                      className="border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
-                      rows="6"
-                    />
-
-                    <select
-                      value={status}
-                      onChange={handleStatusChange}
-                      className="border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
-                    >
-                      <option value="1">Aprobado</option>
-                      <option value="2">Rechazado</option>
-                    </select>
-
-                    <motion.button
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleReview}
-                      disabled={loading}
-                      className="cursor-pointer bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2"
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="animate-spin" size={20} /> Enviando...
-                        </>
-                      ) : (
-                        "Enviar revisión"
-                      )}
-                    </motion.button>
-                  </div>
 
                   )}
                 </div>
@@ -303,6 +341,14 @@ export default function ServicesListPage() {
           </motion.div>
         )}
       </AnimatePresence>
+      {loading && (
+        <div className="fixed inset-0 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center">
+          <Loader2 className="animate-spin text-blue-500" size={48} />
+          <p className="text-gray-700 mt-4 text-lg font-semibold">
+            Cargando...
+          </p>
+        </div>
+      )}
     </div>
   );
 }
