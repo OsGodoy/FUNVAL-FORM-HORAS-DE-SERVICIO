@@ -12,6 +12,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
   const [error, setError] = useState(null)
   const location = useLocation()
   const { user: userSesion } = useAuth()
+  const [hoveredItem, setHoveredItem] = useState(null)
 
   const toggleSubmenu = (name) => {
     setOpenSubmenu((prev) => (prev === name ? null : name))
@@ -32,7 +33,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         const filtered = filterMenuByRoleAndStatus(data)
 
         setMenuItems(filtered)
-        localStorage.setItem('menuItems', JSON.stringify(filtered))
+        localStorage.setItem('menuItems', JSON.stringify(data))
       }
     } catch (error) {
       setError(error)
@@ -93,7 +94,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
     <motion.aside
       animate={{ width: collapsed ? 80 : 256 }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="bg-white shadow-md h-full flex flex-col border-r border-gray-100"
+      className="bg-white shadow-md h-full flex flex-col border-r border-gray-100 relative"
     >
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
         <div className="flex items-center gap-2 overflow-hidden h-7">
@@ -133,19 +134,24 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-4">
+      <nav className="flex-1 overflow-y-visible py-4 relative">
         {menuItems
           .sort((a, b) => a.order - b.order)
           .map((item) => {
             const Icon = Icons[item.icon] || Icons.Circle
-
             const isParentActive = item.children?.some(
               (child) => child.url === location.pathname
             )
 
-            if (item.children && item.children.length > 0)  {
+            
+            if (item.children && item.children.length > 0) {
               return (
-                <div key={item.name}>
+                <div
+                  key={item.name}
+                  onMouseEnter={() => setHoveredItem(item.name)}
+                  onMouseLeave={() => setHoveredItem(null)}
+                  className="relative"
+                >
                   <button
                     onClick={() => toggleSubmenu(item.name)}
                     className={`w-full flex items-center gap-3 px-4 py-2 rounded-md transition 
@@ -171,6 +177,21 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                     )}
                   </button>
 
+                
+                  <AnimatePresence>
+                    {collapsed && hoveredItem === item.name && (
+                      <motion.div
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 10 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-800/80 text-white text-sm rounded-md shadow-lg whitespace-nowrap z-50"
+                      >
+                        {item.name}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   <AnimatePresence>
                     {openSubmenu === item.name && !collapsed && (
                       <motion.div
@@ -184,7 +205,8 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                         {item.children
                           .sort((a, b) => a.order - b.order)
                           .map((child) => {
-                            const ChildIcon = Icons[child.icon] || Icons.Circle
+                            const ChildIcon =
+                              Icons[child.icon] || Icons.Circle
                             return (
                               <Link
                                 key={child.name}
@@ -208,21 +230,43 @@ export default function Sidebar({ collapsed, setCollapsed }) {
               )
             }
 
+           
             return (
-              <Link
+              <div
                 key={item.name}
-                to={item.url}
-                className={`flex items-center gap-3 px-4 py-2 font-medium transition rounded-md
-                  ${collapsed ? 'justify-center' : ''}
-                  ${
-                    location.pathname === item.url
-                      ? 'bg-blue-50 text-[#155CFD]'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
+                onMouseEnter={() => setHoveredItem(item.name)}
+                onMouseLeave={() => setHoveredItem(null)}
+                className="relative"
               >
-                <Icon className="w-5 h-5" />
-                {!collapsed && <span>{item.name}</span>}
-              </Link>
+                <Link
+                  to={item.url}
+                  className={`flex items-center gap-3 px-4 py-2 font-medium transition rounded-md
+                    ${collapsed ? 'justify-center' : ''}
+                    ${
+                      location.pathname === item.url
+                        ? 'bg-blue-50 text-[#155CFD]'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  {!collapsed && <span>{item.name}</span>}
+                </Link>
+
+                
+                <AnimatePresence>
+                  {collapsed && hoveredItem === item.name && (
+                    <motion.div
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-800/80 text-white text-sm rounded-md shadow-lg whitespace-nowrap z-50"
+                    >
+                      {item.name}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             )
           })}
       </nav>

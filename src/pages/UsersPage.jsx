@@ -143,7 +143,7 @@ export default function UsersPage() {
             },
           ]}
           data={users}
-          pageSize={5}
+          pageSize={10}
         />
       </motion.div>
 

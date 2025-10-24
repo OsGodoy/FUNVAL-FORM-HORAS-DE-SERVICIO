@@ -23,11 +23,11 @@ export default function DataTable({
       setLoading(true);
       try {
         if (!Array.isArray(data)) return;
-        const filtered = data.filter((item) =>
-          Object.values(item).some((val) =>
-            val?.toString().toLowerCase().includes(search.toLowerCase())
-          )
-        );
+
+        const filtered = search
+          ? data.filter((item) => deepSearch(item, search))
+          : data;
+
         setTotal(filtered.length);
         const start = (page - 1) * pageSize;
         setRows(filtered.slice(start, start + pageSize));
@@ -38,6 +38,30 @@ export default function DataTable({
 
     loadData();
   }, [data, page, search, pageSize]);
+
+  function deepSearch(obj, searchTerm) {
+    const term = searchTerm.toLowerCase();
+
+    function search(value) {
+      if (value == null) return false;
+
+      if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+        return String(value).toLowerCase().includes(term);
+      }
+
+      if (Array.isArray(value)) {
+        return value.some((item) => search(item));
+      }
+
+      if (typeof value === "object") {
+        return Object.values(value).some((val) => search(val));
+      }
+
+      return false;
+    }
+
+    return search(obj);
+  }
 
   const totalPages = Math.ceil(total / pageSize);
 
@@ -206,27 +230,27 @@ export default function DataTable({
         </p>
 
         <div className="flex gap-1 items-center">
-          
+
           <button
             onClick={() => setPage(1)}
             disabled={page === 1}
-            className={`${page === 1 ? '':'cursor-pointer'} p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition`}
+            className={`${page === 1 ? '' : 'cursor-pointer'} p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition`}
             title="Primera página"
           >
             <ChevronsLeft size={18} />
           </button>
 
-          
+
           <button
             onClick={() => setPage((p) => Math.max(p - 1, 1))}
             disabled={page === 1}
-            className={`${page === 1 ? '': 'cursor-pointer'} p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition`}
+            className={`${page === 1 ? '' : 'cursor-pointer'} p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition`}
             title="Página anterior"
           >
             <ChevronLeft size={18} />
           </button>
 
-         
+
           {(() => {
             const visibleButtons = 3;
             let start = Math.max(1, page - 1);
@@ -246,8 +270,8 @@ export default function DataTable({
                 key={pNum}
                 onClick={() => setPage(pNum)}
                 className={`cursor-pointer px-3 py-1 rounded-lg border transition-all ${page === pNum
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "border-gray-300 hover:bg-gray-100"
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "border-gray-300 hover:bg-gray-100"
                   }`}
               >
                 {pNum}
@@ -255,11 +279,11 @@ export default function DataTable({
             ));
           })()}
 
-        
+
           <button
             onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
             disabled={page === totalPages}
-            className={`${page === totalPages ? '':'cursor-pointer'} p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition`}
+            className={`${page === totalPages ? '' : 'cursor-pointer'} p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition`}
             title="Página siguiente"
           >
             <ChevronRight size={18} />
@@ -268,7 +292,7 @@ export default function DataTable({
           <button
             onClick={() => setPage(totalPages)}
             disabled={page === totalPages}
-            className={`${page === totalPages ? '': 'cursor-pointer'} p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition`}
+            className={`${page === totalPages ? '' : 'cursor-pointer'} p-2 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-40 transition`}
             title="Última página"
           >
             <ChevronsRight size={18} />

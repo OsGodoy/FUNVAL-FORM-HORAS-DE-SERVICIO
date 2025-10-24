@@ -30,7 +30,18 @@ export default function PermissionsPage() {
   useEffect(() => {
     const stored = localStorage.getItem("menuItems");
     if (stored) {
-      setMenuData(JSON.parse(stored));
+      const parsed = JSON.parse(stored);
+
+      const sortMenu = (items) => {
+        return items
+          .sort((a, b) => a.order - b.order)
+          .map((item) => ({
+            ...item,
+            children: item.children ? sortMenu(item.children) : undefined,
+          }));
+      };
+
+      setMenuData(sortMenu(parsed));
     }
   }, []);
 
@@ -89,7 +100,7 @@ export default function PermissionsPage() {
     return menu;
   };
 
-  
+
   const toggleChildrenRoles = (menu, role, select) => {
     const newRoles = select
       ? [...new Set([...menu.roles, role])]
@@ -208,7 +219,7 @@ export default function PermissionsPage() {
       setTimeout(() => {
         toast.dismiss(t);
         window.location.reload();
-      }, 1000); 
+      }, 1000);
     }, 400);
   };
 
