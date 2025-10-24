@@ -12,6 +12,7 @@ import UserFormPage from '../pages/UserFormPage'
 import StudentsPage from '../pages/StudensPage'
 import MenuPage from '../pages/MenuPage'
 import PermissionsPage from "../pages/PermissionsPage";
+import ServicesListPage from '../pages/ServicesListPage'
 
 export default function AppRouter() {
   return (
@@ -27,7 +28,8 @@ export default function AppRouter() {
         <Route path="/schools" element={<SchoolsPage />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/users/:id" element={<UserFormPage />} />
-        <Route path="/service-hours" element={<ServiceHoursPage />} />
+        <Route path="/service-hours" element={<ServicesListPage/>} />
+        <Route path="/service-hours/:id" element={<ServiceHoursPage />} />
         <Route path="/configuracion/menus" element={<MenuPage />} />
         <Route path="/configuracion/permissions" element={<PermissionsPage />} />
       </Route>

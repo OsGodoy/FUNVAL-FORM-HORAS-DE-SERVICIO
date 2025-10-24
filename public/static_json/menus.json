@@ -13,13 +13,37 @@
   {
     "name": "Servicios",
     "description": "Servicios académicos disponibles",
-    "url": "/service-hours",
+    "url": null,
     "roles": ["admin", "student"],
     "order": 1,
     "icon": "Briefcase",
     "status": true,
     "deleted": false,
-    "deleted_at": null
+    "deleted_at": null,
+    "children": [
+      {
+        "name": "Nuevo",
+        "description": "Crear un nuevo registro de servicio",
+        "url": "/service-hours/new",
+        "roles": ["student"],
+        "order": 1,
+        "icon": "CirclePlus",
+        "status": true,
+        "deleted": false,
+        "deleted_at": null
+      },
+      {
+        "name": "Cosulta",
+        "description": "Gestiona los registros de servicios",
+        "url": "/service-hours",
+        "roles": ["admin", "student"],
+        "order": 2,
+        "icon": "FileSearch",
+        "status": true,
+        "deleted": false,
+        "deleted_at": null
+      }
+    ]
   },
   {
     "name": "Estudiantes",

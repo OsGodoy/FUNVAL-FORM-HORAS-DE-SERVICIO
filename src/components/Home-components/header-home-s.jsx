@@ -100,7 +100,7 @@ export default function HeaderHome() {
                       setUserMenuOpen(false);
                     }}
                   >
-                    Actualizar perfil
+                    Ver perfil
                   </li>
                   <li className="px-4 py-2 text-red-600 hover:bg-gray-100 cursor-pointer" onClick={() => logout()}>
                     Cerrar sesión
