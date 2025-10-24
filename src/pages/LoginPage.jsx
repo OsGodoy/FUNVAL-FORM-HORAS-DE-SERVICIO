@@ -1,71 +1,71 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { postFunval } from '../api/funval/services.js'
-import { useAuth } from '../contexts/Auth-context.jsx'
-import toast from 'react-hot-toast'
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { postFunval } from "../api/funval/services.js";
+import { useAuth } from "../contexts/Auth-context.jsx";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const images = [
-    '/images/carousel/carousel1.jpg',
-    '/images/carousel/carousel2.jpg',
-    '/images/carousel/carousel4.jpg',
-  ]
+    "/images/carousel/carousel1.jpg",
+    "/images/carousel/carousel2.jpg",
+    "/images/carousel/carousel4.jpg",
+  ];
 
-  const [index, setIndex] = useState(0)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [remember, setRemember] = useState(false)
-  const [errorMsg, setErrorMsg] = useState('')
-  const navigate = useNavigate()
-  const { login, isAuthenticated, loading, authenticating } = useAuth()
+  const [index, setIndex] = useState(0);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const navigate = useNavigate();
+  const { login, isAuthenticated, loading, authenticating } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated) {
-      const timer = setTimeout(() => navigate('/home'), 1000)
-      return () => clearTimeout(timer)
+      const timer = setTimeout(() => navigate("/home"), 1000);
+      return () => clearTimeout(timer);
     }
-  }, [isAuthenticated, navigate])
+  }, [isAuthenticated, navigate]);
 
   useEffect(() => {
-    const savedEmail = localStorage.getItem('rememberedEmail')
+    const savedEmail = localStorage.getItem("rememberedEmail");
     if (savedEmail) {
-      setEmail(savedEmail)
-      setRemember(true)
+      setEmail(savedEmail);
+      setRemember(true);
     }
-  }, [])
+  }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setErrorMsg('')
+    e.preventDefault();
+    setErrorMsg("");
 
     if (!email.trim() || !password.trim()) {
-      setErrorMsg('Por favor ingrese sus credenciales')
-      return
+      setErrorMsg("Por favor ingrese sus credenciales");
+      return;
     }
 
     try {
-      const result = await login({ email, password })
+      const result = await login({ email, password });
 
       if (result) {
-        if (remember) localStorage.setItem('rememberedEmail', email)
-        else localStorage.removeItem('rememberedEmail')
-        navigate('/home')
+        if (remember) localStorage.setItem("rememberedEmail", email);
+        else localStorage.removeItem("rememberedEmail");
+        navigate("/home");
       } else {
-        setErrorMsg('Credenciales incorrectas')
-        toast.error('Credenciales incorrectas')
+        setErrorMsg("Credenciales incorrectas");
+        toast.error("Credenciales incorrectas");
       }
     } catch (err) {
-      setErrorMsg('Error al iniciar sesión.')
-      toast.error('Error al iniciar sesión.')
+      setErrorMsg("Error al iniciar sesión.");
+      toast.error("Error al iniciar sesión.");
     }
-  }
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % images.length)
-    }, 4000)
-    return () => clearInterval(interval)
-  }, [])
+      setIndex((prev) => (prev + 1) % images.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   if (isAuthenticated || authenticating) {
     return (
@@ -75,7 +75,7 @@ export default function LoginPage() {
           Validando datos...
         </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -84,7 +84,7 @@ export default function LoginPage() {
         {/* Left Side: Form */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-8 sm:px-12 py-16">
           <div className="w-full max-w-md">
-            <Link to={'/'}>
+            <Link to={"/"}>
               <img
                 src="/images/funval-logo.svg"
                 alt="Funval Logo"
@@ -109,7 +109,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className={`p-3 rounded-xl border ${
-                    errorMsg ? 'border-red-500' : 'border-gray-300'
+                    errorMsg ? "border-red-500" : "border-gray-300"
                   } focus:outline-none focus:ring-2 focus:ring-indigo-400 transition w-full`}
                 />
                 {errorMsg && (
@@ -121,13 +121,13 @@ export default function LoginPage() {
                   type="checkbox"
                   checked={remember}
                   onChange={(e) => setRemember(e.target.checked)}
-                  className="accent-indigo-600"
+                  className="accent-blue-500"
                 />
                 Recuerdame
               </label>
               <button
                 type="submit"
-                className="bg-[#155CFD] text-white py-3 rounded-xl font-semibold hover:bg-[#144dd1] active:scale-95 transition-transform duration-200 cursor-pointer"
+                className="bg-blue-500 text-white py-3 rounded-xl font-semibold hover:bg-blue-600 active:scale-95 transition-transform duration-200 cursor-pointer"
               >
                 Login
               </button>
@@ -143,7 +143,7 @@ export default function LoginPage() {
               src={img}
               alt={`slide-${i}`}
               className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
-                i === index ? 'opacity-100' : 'opacity-0'
+                i === index ? "opacity-100" : "opacity-0"
               }`}
             />
           ))}
@@ -158,7 +158,7 @@ export default function LoginPage() {
                 key={i}
                 onClick={() => setIndex(i)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  i === index ? 'bg-white w-6' : 'bg-gray-400'
+                  i === index ? "bg-white w-6" : "bg-gray-400"
                 }`}
               />
             ))}
@@ -166,5 +166,5 @@ export default function LoginPage() {
         </div>
       </div>
     </section>
-  )
+  );
 }
