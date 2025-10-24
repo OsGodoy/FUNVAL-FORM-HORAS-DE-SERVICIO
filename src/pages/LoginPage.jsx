@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { postFunval } from '../api/funval/services.js'
 import { useAuth } from '../contexts/Auth-context.jsx'
+import toast from 'react-hot-toast'
 
 export default function LoginPage() {
   const images = [
@@ -19,11 +20,11 @@ export default function LoginPage() {
   const { login, isAuthenticated, loading, authenticating } = useAuth()
 
   useEffect(() => {
-    if (!loading && isAuthenticated) {
+    if (isAuthenticated) {
       const timer = setTimeout(() => navigate('/home'), 1000)
       return () => clearTimeout(timer)
     }
-  }, [loading, isAuthenticated, navigate])
+  }, [isAuthenticated, navigate])
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberedEmail')
@@ -36,17 +37,26 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setErrorMsg('')
-    try {
-      await login({ email, password })
 
-      if (remember) {
-        localStorage.setItem('rememberedEmail', email)
+    if (!email.trim() || !password.trim()) {
+      setErrorMsg('Por favor ingrese sus credenciales')
+      return
+    }
+
+    try {
+      const result = await login({ email, password })
+
+      if (result) {
+        if (remember) localStorage.setItem('rememberedEmail', email)
+        else localStorage.removeItem('rememberedEmail')
+        navigate('/home')
       } else {
-        localStorage.removeItem('rememberedEmail')
+        setErrorMsg('Credenciales incorrectas')
+        toast.error('Credenciales incorrectas')
       }
-    } catch (error) {
-      console.error('Error al iniciar sesión:', error)
-      setErrorMsg('Credenciales incorrectas')
+    } catch (err) {
+      setErrorMsg('Error al iniciar sesión.')
+      toast.error('Error al iniciar sesión.')
     }
   }
 
@@ -57,11 +67,11 @@ export default function LoginPage() {
     return () => clearInterval(interval)
   }, [])
 
-  if (loading || authenticating || isAuthenticated) {
+  if (isAuthenticated || authenticating) {
     return (
       <div className="flex flex-col justify-center items-center h-screen gap-6">
         <div className="w-14 h-14 border-[6px] border-[#C1DFF7] border-t-[#37A5F2] rounded-full animate-spin"></div>
-        <p className="text-lg font-semibold tracking-wide text-white">
+        <p className="text-lg font-semibold tracking-wide ">
           Validando datos...
         </p>
       </div>
@@ -117,7 +127,7 @@ export default function LoginPage() {
               </label>
               <button
                 type="submit"
-                className="bg-[#155CFD] text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 active:scale-95 transition-transform duration-200 cursor-pointer"
+                className="bg-[#155CFD] text-white py-3 rounded-xl font-semibold hover:bg-[#144dd1] active:scale-95 transition-transform duration-200 cursor-pointer"
               >
                 Login
               </button>

@@ -58,6 +58,7 @@ export function AuthProvider({ children }) {
     } finally {
       setUser(null)
       Cookies.remove('user')
+      sessionStorage.clear()
       navigate('/login')
     }
   }
