@@ -2,19 +2,20 @@ import { useState } from "react";
 import { Bell, MessageCircle, ChevronDown } from "lucide-react";
 import { useAuth } from "../../contexts/Auth-context";
 import ChangePassword from "../shared/ChangePassword";
+import UpdateUssers from "../shared/UpdateUssers";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   return (
     <>
       <header className="w-full flex justify-between items-center bg-white shadow-sm px-8 py-3">
         <div className="flex items-center gap-8"></div>
 
-            <div className="flex items-center gap-4 relative">
-
+        <div className="flex items-center gap-4 relative">
           <Bell className="w-5 h-5 text-gray-600 cursor-pointer hover:text-blue-600" />
 
           <MessageCircle className="w-5 h-5 text-gray-600 cursor-pointer hover:text-blue-600" />
@@ -36,7 +37,16 @@ export default function Header() {
                       setUserMenuOpen(false);
                     }}
                   >
-                    Ver perfil
+                    Cambiar contraseña
+                  </li>
+                  <li
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      setShowUpdateModal(true);
+                      setUserMenuOpen(false);
+                    }}
+                  >
+                    Actualizar Perfil
                   </li>
                   <li className="px-4 py-2 text-red-600 hover:bg-gray-100 cursor-pointer" onClick={() => logout()}>
                     Cerrar sesión
@@ -48,6 +58,7 @@ export default function Header() {
         </div>
       </header>
       <ChangePassword isOpen={showPasswordModal} onClose={() => setShowPasswordModal(false)} />
+      <UpdateUssers isOpen={showUpdateModal} onClose={() => setShowUpdateModal(false)} />
     </>
   );
 }
