@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import { getFunval, patchFunval } from "../api/funval/services";
+import { useEffect, useState } from "react";
+import { getFunval, patchFunval } from "../api/funval/services";
 import toast, { Toaster } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import DataTable from "../components/shared/DataTable";
+import { useNavigate } from "react-router-dom";
+import { PlusCircle, Loader2 } from "lucide-react";
+import { statusStyles } from "../utils/utils";
+import { useAuth } from "../contexts/Auth-context";
 import { useNavigate } from "react-router-dom";
 import { PlusCircle, Loader2 } from "lucide-react";
 import { statusStyles } from "../utils/utils";
@@ -131,6 +138,93 @@ export default function ServicesListPage() {
     if (Number(e.target.value) > 0) setStatus("1");
   }
 
+    const columsHeaders = userSession.role?.name === 'Admin' ?
+    [
+      { key: "id", label: "#" },
+      { key: "user.full_name", label: "Usuario" },
+      { key: "category.name", label: "Servicio" },
+      { key: "amount_reported", label: "Horas reportadas" },
+      {
+        key: "status",
+        label: "Estado",
+        render: (row) => {
+          const style = statusStyles[row.status || "Pending"] || {};
+          return (
+            <span
+              className={`px-2 py-1 rounded-lg font-semibold text-sm ${style.bg} ${style.color}`}
+            >
+              {style.label || row.status}
+            </span>
+          );
+        },
+      },
+      { key: "amount_approved", label: "Horas aprobadas" },
+      { key: "comment", label: "Comentarios" },
+      {
+        key: "evidence",
+        label: "Evidencia",
+        render: (row) =>
+          row.evidence ? (
+            <button
+              onClick={() => getEvidence(row.evidence, row.id, row.status === 'Pending')}
+              className={`cursor-pointer ${row.status === 'Pending' ? 'text-orange-500 hover:text-orange-700' : 'text-blue-600 hover:text-blue-800'} font-semibold underline`}
+            >
+              {row.status === 'Pending' && userSession.role?.name === 'Admin' ? 'Revisar' : 'Ver PDF'}
+            </button>
+          ) : (
+            <span className="text-gray-400 italic">Sin evidencia</span>
+          ),
+      },
+      {
+        key: "created_at",
+        label: "Fecha creación",
+        render: (row) => formatDate(row.created_at),
+      },
+      {
+        key: "updated_at",
+        label: "Fecha actualización",
+        render: (row) => formatDate(row.updated_at),
+      },
+    ]
+    :
+    [
+      { key: "id", label: "#" },
+      { key: "user.full_name", label: "Usuario" },
+      { key: "category.name", label: "Servicio" },
+      { key: "amount_reported", label: "Horas reportadas" },
+      {
+        key: "status",
+        label: "Estado",
+        render: (row) => {
+          const style = statusStyles[row.status || "Pending"] || {};
+          return (
+            <span
+              className={`px-2 py-1 rounded-lg font-semibold text-sm ${style.bg} ${style.color}`}
+            >
+              {style.label || row.status}
+            </span>
+          );
+        },
+      },
+      {
+        key: "evidence",
+        label: "Evidencia",
+        render: (row) =>
+          row.evidence ? (
+            <button
+              onClick={() => getEvidence(row.evidence, row.id, row.status === 'Pending')}
+              className={`cursor-pointer ${row.status === 'Pending' ? 'text-orange-500 hover:text-orange-700' : 'text-blue-600 hover:text-blue-800'} font-semibold underline`}
+            >
+              {row.status === 'Pending' && userSession.role?.name === 'Admin' ? 'Revisar' : 'Ver PDF'}
+            </button>
+          ) : (
+            <span className="text-gray-400 italic">Sin evidencia</span>
+          ),
+      },
+      { key: "amount_approved", label: "Horas aprobadas" },
+      { key: "comment", label: "Comentarios" }
+    ];
+
   return (
     <div className="flex flex-col gap-6 p-6">
       <Toaster position="top-right" />
@@ -156,53 +250,7 @@ export default function ServicesListPage() {
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
         <DataTable
-          headers={[
-            { key: "id", label: "#" },
-            { key: "user.full_name", label: "Usuario" },
-            { key: "category.name", label: "Servicio" },
-            { key: "amount_reported", label: "Horas reportadas" },
-            {
-              key: "status",
-              label: "Estado",
-              render: (row) => {
-                const style = statusStyles[row.status || "Pending"] || {};
-                return (
-                  <span
-                    className={`px-2 py-1 rounded-lg font-semibold text-sm ${style.bg} ${style.color}`}
-                  >
-                    {style.label || row.status}
-                  </span>
-                );
-              },
-            },
-            { key: "amount_approved", label: "Horas aprobadas" },
-            { key: "comment", label: "Comentarios" },
-            {
-              key: "evidence",
-              label: "Evidencia",
-              render: (row) =>
-                row.evidence ? (
-                  <button
-                    onClick={() => getEvidence(row.evidence, row.id, row.status === 'Pending')}
-                    className={`cursor-pointer ${row.status === 'Pending' ? 'text-orange-500 hover:text-orange-700':'text-blue-600 hover:text-blue-800'} font-semibold underline`}
-                  >
-                   {row.status === 'Pending' ? 'Revisar': 'Ver PDF'} 
-                  </button>
-                ) : (
-                  <span className="text-gray-400 italic">Sin evidencia</span>
-                ),
-            },
-            {
-              key: "created_at",
-              label: "Fecha creación",
-              render: (row) => formatDate(row.created_at),
-            },
-            {
-              key: "updated_at",
-              label: "Fecha actualización",
-              render: (row) => formatDate(row.updated_at),
-            },
-          ]}
+          headers={columsHeaders}
           data={serviList}
           pageSize={10}
         />
