@@ -71,7 +71,7 @@ export default function StudentsPage() {
             },
           ]}
           data={students}
-          pageSize={5}
+          pageSize={10}
         />
       </motion.div>
     </div>

@@ -2,67 +2,37 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Pencil, Trash2, PlusCircle } from 'lucide-react'
 import DataTable from '../components/shared/DataTable'
-import {
-  getFunval,
-  postFunval,
-  putFunval,
-  deleteFunval,
-} from '../api/funval/services'
 import toast, { Toaster } from 'react-hot-toast'
 import ConfirmDialog from '../components/shared/ConfirmDialog'
 
 export default function MenuPage() {
   const [menuItems, setMenuItems] = useState([])
-  const [expandedRows, setExpandedRows] = useState({})
   const [showForm, setShowForm] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [isConfirmDialogOpen, setConfirmDialogOpen] = useState(false)
-  const [idToDelete, setIdToDelete] = useState(null)
+  const [itemToDelete, setItemToDelete] = useState(null)
 
-  /* Sesion storage Read */
   useEffect(() => {
-    try {
-      const storedMenus = JSON.parse(localStorage.getItem('menuItems')) || []
-      setMenuItems(storedMenus)
-    } catch (error) {
-      console.error('Error al leer menuItems del localStorage:', error)
-      toast.error('Error al cargar los menús almacenados')
-    }
+    const storedMenus = JSON.parse(localStorage.getItem('menuItems')) || []
+    setMenuItems(storedMenus)
   }, [])
-
-  const flattenMenus = (menus) => {
-    const flat = []
-    menus.forEach((item) => {
-      flat.push({
-        ...item,
-        parent: null,
-        type: 'Menú',
-      })
-      if (Array.isArray(item.children)) {
-        item.children.forEach((child) => {
-          flat.push({
-            ...child,
-            parent: item.name,
-            type: 'Submenú',
-          })
-        })
-      }
-    })
-    return flat
-  }
 
   const updateStorage = (data) => {
     setMenuItems(data)
     localStorage.setItem('menuItems', JSON.stringify(data))
   }
 
-  const toggleExpand = (name) => {
-    setExpandedRows((prev) => ({ ...prev, [name]: !prev[name] }))
-  }
-
-  const handleEdit = (item) => {
-    setSelectedCategory(item)
-    setShowForm(true)
+  // Flatten con parentName
+  const flattenMenus = (menus, parentName = null) => {
+    let flat = []
+    menus.forEach((item) => {
+      const newItem = { ...item, parentName }
+      flat.push(newItem)
+      if (item.children?.length) {
+        flat.push(...flattenMenus(item.children, item.name))
+      }
+    })
+    return flat
   }
 
   const handleCreate = () => {
@@ -70,76 +40,100 @@ export default function MenuPage() {
     setShowForm(true)
   }
 
-  const handleDelete = async () => {
-    try {
-      await deleteFunval(`/categories/${idCategoryToDelete}`)
-      toast.success('Categoría eliminada correctamente')
-    } catch (error) {
-      console.error('Error deleting category:', error)
-      toast.error('Error al eliminar la categoría')
-    }
+  const handleEdit = (item) => {
+    setSelectedItem(item)
+    setShowForm(true)
   }
 
-  const handleDeleteConfirm = (id) => {
-    setIdToDelete(id)
+  const handleDeleteConfirm = (item) => {
+    setItemToDelete(item)
     setConfirmDialogOpen(true)
   }
 
-  const handleConfirmDelete = async () => {
-    if (idCategoryToDelete) {
-      await handleDelete()
-      setConfirmDialogOpen(false)
-      setIdCategoryToDelete(null)
-    }
+  const handleConfirmDelete = () => {
+    const filtered = menuItems.filter(
+      (item) => item.name !== itemToDelete.name
+    )
+    updateStorage(filtered)
+    setConfirmDialogOpen(false)
+    setItemToDelete(null)
+    toast.success('Item de menú eliminado correctamente')
   }
 
   const handleCancelDelete = () => {
     setConfirmDialogOpen(false)
-    setIdToDelete(null)
+    setItemToDelete(null)
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     const form = e.target
     const name = form.name.value.trim()
     const description = form.description.value.trim()
+    const parentName = form.parent.value || null
+    const icon = form.icon.value.trim() || '—'
+    const url = form.url.value.trim() || '—'
+    const order = parseInt(form.order.value) || 0
 
     if (!name) {
       toast.error('El nombre es obligatorio')
       return
     }
 
-    try {
-      if (selectedCategory) {
-        await putFunval(`/categories/${selectedCategory.id}`, {
-          name,
-          description,
-        })
-        toast.success('Categoría actualizada correctamente')
-      } else {
-        await postFunval('/categories', { name, description })
-        toast.success('Categoría creada con éxito')
+    if (selectedItem) {
+      // Editar
+      const updated = menuItems.map((item) =>
+        item.name === selectedItem.name
+          ? { ...item, name, description, parentName, icon, url, order }
+          : item
+      )
+      updateStorage(updated)
+      toast.success('Item de menú actualizado correctamente')
+    } else {
+      // Crear nuevo
+      const newItem = {
+        name,
+        description,
+        parentName,
+        icon,
+        url,
+        order,
+        status: true,
+        deleted: false,
+        children: [],
       }
 
-      setShowForm(false)
-    } catch (error) {
-      console.error('Error saving category:', error)
-      toast.error('Error al guardar la categoría')
+      // Si es hijo
+      if (parentName) {
+        const updated = menuItems.map((item) =>
+          item.name === parentName
+            ? { ...item, children: [...(item.children || []), newItem] }
+            : item
+        )
+        updateStorage(updated)
+      } else {
+        updateStorage([...menuItems, newItem])
+      }
+
+      toast.success('Item de menú creado correctamente')
     }
+
+    setShowForm(false)
+    setSelectedItem(null)
   }
 
-  const flatData = flattenMenus(menuItems).map((item, idx) => ({
-    id: idx + 1,
-    name: item.name,
-    description: item.description,
-    url: item.url || '—',
-    icon: item.icon || '—',
-    roles: item.roles?.join(', ') || '—',
-    type: item.type,
-    parent: item.parent || '—',
-    status: item.deleted ? 'Eliminado' : item.status ? 'Activo' : 'Inactivo',
-    deleted: item.deleted,
-  }))
+  const flatMenus = flattenMenus(menuItems)
+  const flatData = flatMenus
+    .sort((a, b) => (a.order || 0) - (b.order || 0))
+    .map((item) => ({
+      name: item.name,
+      description: item.description,
+      url: item.url || '—',
+      icon: item.icon || '—',
+      parent: item.parentName || '—',
+      order: item.order || 0,
+      status: item.deleted ? 'Eliminado' : item.status ? 'Activo' : 'Inactivo',
+    }))
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -151,59 +145,53 @@ export default function MenuPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <h1 className="text-3xl font-bold text-gray-800">Gestión de Menus</h1>
-
+        <h1 className="text-3xl font-bold text-gray-800">Gestión de Menús</h1>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.97 }}
           onClick={handleCreate}
-          className="flex items-center gap-2 cursor-pointer px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition"
         >
           <PlusCircle size={20} />
-          Agregar Menu
+          Agregar Menú
         </motion.button>
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <DataTable
-          headers={[
-            { key: 'name', label: 'Nombre' },
-            { key: 'description', label: 'Descripción' },
-            { key: 'icon', label: 'Icono', icon: true },
-            { key: 'url', label: 'URL' },
-            { key: 'type', label: 'Tipo' },
-            {
-              key: 'actions',
-              aling: 'center',
-              label: 'Acciones',
-              render: (row) => (
-                <div className="flex gap-3 justify-center">
-                  <button
-                    onClick={() => handleEdit(row)}
-                    className="text-blue-600 hover:text-blue-800 transition cursor-pointer"
-                    title="Editar"
-                  >
-                    <Pencil size={18} />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteConfirm(row.id)}
-                    className="text-red-600 hover:text-red-800 transition cursor-pointer"
-                    title="Eliminar"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              ),
-            },
-          ]}
-          data={flatData}
-          pageSize={5}
-        />
-      </motion.div>
+      <DataTable
+        headers={[
+          { key: 'name', label: 'Nombre' },
+          { key: 'description', label: 'Descripción' },
+          { key: 'icon', label: 'Icono', icon: true },
+          { key: 'url', label: 'URL' },
+          { key: 'parent', label: 'Padre' },
+          { key: 'order', label: 'Orden' },
+          {
+            key: 'actions',
+            label: 'Acciones',
+            aling: 'center',
+            render: (row) => (
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => handleEdit(row)}
+                  className="text-blue-600 hover:text-blue-800 transition cursor-pointer"
+                  title="Editar"
+                >
+                  <Pencil size={18} />
+                </button>
+                <button
+                  onClick={() => handleDeleteConfirm(row)}
+                  className="text-red-600 hover:text-red-800 transition cursor-pointer"
+                  title="Eliminar"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            ),
+          },
+        ]}
+        data={flatData}
+        pageSize={10}
+      />
 
       <ConfirmDialog
         title="¿Estás seguro?"
@@ -217,7 +205,7 @@ export default function MenuPage() {
         {showForm && (
           <motion.div
             onClick={() => setShowForm(false)}
-            className="fixed inset-0 bg-black/60 bg-opacity-40 flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -231,25 +219,58 @@ export default function MenuPage() {
               transition={{ duration: 0.3 }}
             >
               <h2 className="text-xl font-semibold mb-4 text-gray-800">
-                {selectedCategory
-                  ? 'Editar Categoría'
-                  : 'Crear Nueva Categoría'}
+                {selectedItem ? 'Editar Item de menú' : 'Crear Nuevo Item de menú'}
               </h2>
 
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                <select
+                  name="parent"
+                  defaultValue={selectedItem?.parent || ''}
+                  className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+                >
+                  <option value="">— Sin padre —</option>
+                  {menuItems
+                    .filter((item) => !item.parentName)
+                    .map((item) => (
+                      <option key={`opt-${item.name}`} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))}
+                </select>
+
                 <input
                   name="name"
                   placeholder="Nombre"
-                  defaultValue={selectedCategory?.name || ''}
+                  defaultValue={selectedItem?.name || ''}
                   className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
                   required
                 />
                 <input
                   name="description"
                   placeholder="Descripción"
-                  defaultValue={selectedCategory?.description || ''}
+                  defaultValue={selectedItem?.description || ''}
                   className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
                 />
+                <input
+                  name="icon"
+                  placeholder="Icono (ej: Home)"
+                  defaultValue={selectedItem?.icon || ''}
+                  className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+                />
+                <input
+                  name="url"
+                  placeholder="URL"
+                  defaultValue={selectedItem?.url || ''}
+                  className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+                />
+                <input
+                  name="order"
+                  type="number"
+                  placeholder="Orden"
+                  defaultValue={selectedItem?.order || 0}
+                  className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+                />
+
                 <div className="flex justify-end gap-3 mt-2">
                   <button
                     type="button"
@@ -262,7 +283,7 @@ export default function MenuPage() {
                     type="submit"
                     className="cursor-pointer px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
                   >
-                    {selectedCategory ? 'Modificar' : 'Guardar'}
+                    {selectedItem ? 'Modificar' : 'Guardar'}
                   </button>
                 </div>
               </form>
