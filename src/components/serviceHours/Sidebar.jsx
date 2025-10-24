@@ -20,18 +20,19 @@ export default function Sidebar({ collapsed, setCollapsed }) {
   const getMenuItems = async () => {
     setIsLoading(true)
     try {
-      const cachedMenu = sessionStorage.getItem('menuItems')
+      const cachedMenu = localStorage.getItem('menuItems')
 
       if (cachedMenu) {
         const parsed = JSON.parse(cachedMenu)
-        setMenuItems(parsed)
+        const filtered = filterMenuByRoleAndStatus(parsed)
+        setMenuItems(filtered)
       } else {
         const response = await getData('/menus.json')
         const data = response.data
         const filtered = filterMenuByRoleAndStatus(data)
 
         setMenuItems(filtered)
-        sessionStorage.setItem('menuItems', JSON.stringify(filtered))
+        localStorage.setItem('menuItems', JSON.stringify(filtered))
       }
     } catch (error) {
       setError(error)
@@ -142,7 +143,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
               (child) => child.url === location.pathname
             )
 
-            if (item.children) {
+            if (item.children && item.children.length > 0)  {
               return (
                 <div key={item.name}>
                   <button

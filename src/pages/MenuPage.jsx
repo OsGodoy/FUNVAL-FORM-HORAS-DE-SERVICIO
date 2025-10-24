@@ -22,10 +22,10 @@ export default function MenuPage() {
   /* Sesion storage Read */
   useEffect(() => {
     try {
-      const storedMenus = JSON.parse(sessionStorage.getItem('menuItems')) || []
+      const storedMenus = JSON.parse(localStorage.getItem('menuItems')) || []
       setMenuItems(storedMenus)
     } catch (error) {
-      console.error('Error al leer menuItems del sessionStorage:', error)
+      console.error('Error al leer menuItems del localStorage:', error)
       toast.error('Error al cargar los menús almacenados')
     }
   }, [])
@@ -53,7 +53,7 @@ export default function MenuPage() {
 
   const updateStorage = (data) => {
     setMenuItems(data)
-    sessionStorage.setItem('menuItems', JSON.stringify(data))
+    localStorage.setItem('menuItems', JSON.stringify(data))
   }
 
   const toggleExpand = (name) => {
@@ -133,6 +133,7 @@ export default function MenuPage() {
     name: item.name,
     description: item.description,
     url: item.url || '—',
+    icon: item.icon || '—',
     roles: item.roles?.join(', ') || '—',
     type: item.type,
     parent: item.parent || '—',
@@ -172,6 +173,7 @@ export default function MenuPage() {
           headers={[
             { key: 'name', label: 'Nombre' },
             { key: 'description', label: 'Descripción' },
+            { key: 'icon', label: 'Icono', icon: true },
             { key: 'url', label: 'URL' },
             { key: 'type', label: 'Tipo' },
             {
@@ -200,7 +202,6 @@ export default function MenuPage() {
           ]}
           data={flatData}
           pageSize={5}
-          exportable={true}
         />
       </motion.div>
 
