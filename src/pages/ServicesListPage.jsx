@@ -344,6 +344,14 @@ export default function ServicesListPage() {
           </motion.div>
         )}
       </AnimatePresence>
+      {loading && (
+        <div className="fixed inset-0 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center">
+          <Loader2 className="animate-spin text-blue-500" size={48} />
+          <p className="text-gray-700 mt-4 text-lg font-semibold">
+            Cargando...
+          </p>
+        </div>
+      )}
     </div>
   );
 }
