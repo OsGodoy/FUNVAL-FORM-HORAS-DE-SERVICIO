@@ -1,0 +1,128 @@
+[
+  {
+    "name": "Escuelas",
+    "description": "administración general de la escuela",
+    "url": "/schools",
+    "roles": ["admin"],
+    "order": 3,
+    "icon": "School",
+    "status": true,
+    "deleted": false,
+    "deleted_at": null
+  },
+  {
+    "name": "Servicios",
+    "description": "Servicios académicos disponibles",
+    "url": null,
+    "roles": ["admin", "student"],
+    "order": 1,
+    "icon": "Briefcase",
+    "status": true,
+    "deleted": false,
+    "deleted_at": null,
+    "children": [
+      {
+        "name": "Nuevo",
+        "description": "Crear un nuevo registro de servicio",
+        "url": "/service-hours/new",
+        "roles": ["student"],
+        "order": 1,
+        "icon": "CirclePlus",
+        "status": true,
+        "deleted": false,
+        "deleted_at": null
+      },
+      {
+        "name": "Cosulta",
+        "description": "Gestiona los registros de servicios",
+        "url": "/service-hours",
+        "roles": ["admin", "student"],
+        "order": 2,
+        "icon": "FileSearch",
+        "status": true,
+        "deleted": false,
+        "deleted_at": null
+      }
+    ]
+  },
+  {
+    "name": "Estudiantes",
+    "description": "Gestión y seguimiento de estudiantes",
+    "url": "/students",
+    "roles": ["admin"],
+    "order": 2,
+    "icon": "GraduationCap",
+    "status": true,
+    "deleted": false,
+    "deleted_at": null
+  },
+  {
+    "name": "Configuración",
+    "description": "Opciones avanzadas del sistema",
+    "url": null,
+    "roles": ["admin"],
+    "order": 4,
+    "icon": "Settings",
+    "status": true,
+    "deleted": false,
+    "deleted_at": null,
+    "children": [
+      {
+        "name": "Menús",
+        "description": "Gestión del menú del sistema",
+        "url": "/configuracion/menus",
+        "roles": ["admin"],
+        "order": 1,
+        "icon": "MenuSquare",
+        "status": true,
+        "deleted": false,
+        "deleted_at": null
+      },
+      {
+        "name": "Permisos",
+        "description": "Control de acceso y permisos por rol",
+        "url": "/configuracion/permissions",
+        "roles": ["admin"],
+        "order": 2,
+        "icon": "KeyRound",
+        "status": true,
+        "deleted": false,
+        "deleted_at": null
+      },
+
+      {
+        "name": "Categorías",
+        "description": "Gestión de categorías del sistema",
+        "url": "/categories",
+        "roles": ["admin"],
+        "order": 3,
+        "icon": "LayoutList",
+        "status": true,
+        "deleted": false,
+        "deleted_at": null
+      },
+      {
+        "name": "Roles",
+        "description": "administración de los roles de usuario",
+        "url": "/roles",
+        "roles": ["admin"],
+        "order": 4,
+        "icon": "Shield",
+        "status": true,
+        "deleted": false,
+        "deleted_at": null
+      },
+      {
+        "name": "Usuarios",
+        "description": "Gestión de usuarios del sistema",
+        "url": "/users",
+        "roles": ["admin"],
+        "order": 5,
+        "icon": "Users",
+        "status": true,
+        "deleted": false,
+        "deleted_at": null
+      }
+    ]
+  }
+]
