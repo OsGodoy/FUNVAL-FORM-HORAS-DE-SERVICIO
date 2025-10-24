@@ -36,6 +36,7 @@ export default function ServicesListPage() {
     }
   };
 
+
   const getEvidence = async (id_evidence, serviceId, isReview) => {
     setLoading(true);
     setIsReviewMode(isReview);
@@ -61,6 +62,7 @@ export default function ServicesListPage() {
     }
   };
 
+
   const closeModal = () => {
     if (pdfUrl) URL.revokeObjectURL(pdfUrl);
     setPdfUrl(null);
@@ -70,6 +72,7 @@ export default function ServicesListPage() {
     setComment("");
     setStatus("Approved");
   };
+
 
   const handleReview = async () => {
     if (!approvedHours || !status) {
@@ -120,13 +123,13 @@ export default function ServicesListPage() {
 
   const handleStatusChange = (e) => {
     setStatus(e.target.value);
-    if (e.target.value === "2") setApprovedHours("0");
-  };
+    if (e.target.value === '2') setApprovedHours("0");
+  }
 
   const handleApprovedHoursChange = (e) => {
     setApprovedHours(e.target.value);
     if (Number(e.target.value) > 0) setStatus("1");
-  };
+  }
 
   const columsHeaders = userSession.role?.name === 'Admin' ?
     [
