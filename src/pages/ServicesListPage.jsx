@@ -1,15 +1,8 @@
 import { useEffect, useState } from "react";
 import { getFunval, patchFunval } from "../api/funval/services";
-import { useEffect, useState } from "react";
-import { getFunval, patchFunval } from "../api/funval/services";
 import toast, { Toaster } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { motion, AnimatePresence } from "framer-motion";
 import DataTable from "../components/shared/DataTable";
-import { useNavigate } from "react-router-dom";
-import { PlusCircle, Loader2 } from "lucide-react";
-import { statusStyles } from "../utils/utils";
-import { useAuth } from "../contexts/Auth-context";
 import { useNavigate } from "react-router-dom";
 import { PlusCircle, Loader2 } from "lucide-react";
 import { statusStyles } from "../utils/utils";
@@ -20,7 +13,7 @@ export default function ServicesListPage() {
   const { user: userSession } = useAuth();
 
   const [serviList, setServiList] = useState([]);
-  const [isReviewMode, setIsReviewMode] = useState(false);  
+  const [isReviewMode, setIsReviewMode] = useState(false);
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,7 +25,7 @@ export default function ServicesListPage() {
   const [status, setStatus] = useState("Approved");
   const [loading, setLoading] = useState(false);
 
- 
+
   const getServices = async () => {
     try {
       const response = await getFunval("/services");
@@ -59,7 +52,7 @@ export default function ServicesListPage() {
       setSelectedServiceId(serviceId);
       setIsModalOpen(true);
     } catch (error) {
-      const errorMessage =`Detalle: ${error.response?.data?.message || error.message}` ;
+      const errorMessage = `Detalle: ${error.response?.data?.message || error.message}`;
       console.error("Error fetching evidence:", error);
       toast.error(`Error al cargar la evidencia. ${errorMessage}`);
       setSelectedServiceId(serviceId);
@@ -138,7 +131,7 @@ export default function ServicesListPage() {
     if (Number(e.target.value) > 0) setStatus("1");
   }
 
-    const columsHeaders = userSession.role?.name === 'Admin' ?
+  const columsHeaders = userSession.role?.name === 'Admin' ?
     [
       { key: "id", label: "#" },
       { key: "user.full_name", label: "Usuario" },
@@ -237,7 +230,7 @@ export default function ServicesListPage() {
       >
         <h1 className="text-3xl font-bold text-gray-800">{userSession.role?.name === 'Admin' ? 'Lista de horas de servicio' : 'Mis horas de servicio'}</h1>
 
-       {userSession.role?.name === 'Student' && <motion.button
+        {userSession.role?.name === 'Student' && <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.97 }}
           onClick={handleCreateNew}
@@ -291,58 +284,58 @@ export default function ServicesListPage() {
                     <iframe
                       src={pdfUrl}
                       title="Evidencia PDF"
-                      className={` ${ isReviewMode ? 'w-[60%]' : ' w-full'} h-[50vh] border rounded-lg mb-4`}
+                      className={` ${isReviewMode && userSession.role?.name === 'Admin' ? 'w-[60%]' : ' w-full'} h-[50vh] border rounded-lg mb-4`}
                     />
                   )
-                  : (
-                    <div className={` ${ isReviewMode ? 'w-[60%]': 'w-full'} flex justify-center items-center h-[50vh] border border-gray-300 rounded-lg mb-4`}>
-                      <span className="text-gray-500 italic">No hay evidencia disponible</span>
+                    : (
+                      <div className={` ${isReviewMode && userSession.role?.name === 'Admin' ? 'w-[60%]' : 'w-full'} flex justify-center items-center h-[50vh] border border-gray-300 rounded-lg mb-4`}>
+                        <span className="text-gray-500 italic">No hay evidencia disponible</span>
+                      </div>
+                    )}
+
+                  {isReviewMode && userSession.role?.name === 'Admin' && (
+                    <div className="flex flex-col gap-4 w-[40%] ">
+                      <input
+                        type="number"
+                        min="0"
+                        value={approvedHours}
+                        onChange={handleApprovedHoursChange}
+                        placeholder="Horas aprobadas"
+                        className="border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+                      />
+
+                      <textarea
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Comentarios"
+                        className="border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+                        rows="6"
+                      />
+
+                      <select
+                        value={status}
+                        onChange={handleStatusChange}
+                        className="border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
+                      >
+                        <option value="1">Aprobado</option>
+                        <option value="2">Rechazado</option>
+                      </select>
+
+                      <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleReview}
+                        disabled={loading}
+                        className="cursor-pointer bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="animate-spin" size={20} /> Enviando...
+                          </>
+                        ) : (
+                          "Enviar revisión"
+                        )}
+                      </motion.button>
                     </div>
-                  )}
-
-                  {isReviewMode && (
-                  <div className="flex flex-col gap-4 w-[40%] ">
-                    <input
-                      type="number"
-                      min="0"
-                      value={approvedHours}
-                      onChange={handleApprovedHoursChange}
-                      placeholder="Horas aprobadas"
-                      className="border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
-                    />
-
-                    <textarea
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                      placeholder="Comentarios"
-                      className="border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
-                      rows="6"
-                    />
-
-                    <select
-                      value={status}
-                      onChange={handleStatusChange}
-                      className="border border-gray-200 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300"
-                    >
-                      <option value="1">Aprobado</option>
-                      <option value="2">Rechazado</option>
-                    </select>
-
-                    <motion.button
-                      whileTap={{ scale: 0.95 }}
-                      onClick={handleReview}
-                      disabled={loading}
-                      className="cursor-pointer bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2"
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="animate-spin" size={20} /> Enviando...
-                        </>
-                      ) : (
-                        "Enviar revisión"
-                      )}
-                    </motion.button>
-                  </div>
 
                   )}
                 </div>

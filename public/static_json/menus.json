@@ -49,7 +49,7 @@
     "name": "Estudiantes",
     "description": "Gestión y seguimiento de estudiantes",
     "url": "/students",
-    "roles": ["admin", "student"],
+    "roles": ["admin"],
     "order": 2,
     "icon": "GraduationCap",
     "status": true,

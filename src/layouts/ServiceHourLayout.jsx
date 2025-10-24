@@ -17,7 +17,7 @@ function ServiceHourLayout() {
         className={`flex flex-col flex-1 transition-[margin] duration-500 ease-in-out`}
       >
         <Header />
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1  overflow-auto min-w-0">
           <Main />
         </div>
         <Footer />
