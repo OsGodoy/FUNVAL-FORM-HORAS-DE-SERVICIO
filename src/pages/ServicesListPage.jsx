@@ -15,6 +15,7 @@ export default function ServicesListPage() {
   const [serviList, setServiList] = useState([]);
   const [isReviewMode, setIsReviewMode] = useState(false);
 
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [selectedServiceId, setSelectedServiceId] = useState(null);
@@ -23,6 +24,7 @@ export default function ServicesListPage() {
   const [comment, setComment] = useState("");
   const [status, setStatus] = useState("Approved");
   const [loading, setLoading] = useState(false);
+
 
   const getServices = async () => {
     try {
@@ -49,9 +51,7 @@ export default function ServicesListPage() {
       setSelectedServiceId(serviceId);
       setIsModalOpen(true);
     } catch (error) {
-      const errorMessage = `Detalle: ${
-        error.response?.data?.message || error.message
-      }`;
+      const errorMessage = `Detalle: ${error.response?.data?.message || error.message}`;
       console.error("Error fetching evidence:", error);
       toast.error(`Error al cargar la evidencia. ${errorMessage}`);
       setSelectedServiceId(serviceId);
@@ -128,6 +128,93 @@ export default function ServicesListPage() {
     if (Number(e.target.value) > 0) setStatus("1");
   };
 
+  const columsHeaders = userSession.role?.name === 'Admin' ?
+    [
+      { key: "id", label: "#" },
+      { key: "user.full_name", label: "Usuario" },
+      { key: "category.name", label: "Servicio" },
+      { key: "amount_reported", label: "Horas reportadas" },
+      {
+        key: "status",
+        label: "Estado",
+        render: (row) => {
+          const style = statusStyles[row.status || "Pending"] || {};
+          return (
+            <span
+              className={`px-2 py-1 rounded-lg font-semibold text-sm ${style.bg} ${style.color}`}
+            >
+              {style.label || row.status}
+            </span>
+          );
+        },
+      },
+      { key: "amount_approved", label: "Horas aprobadas" },
+      { key: "comment", label: "Comentarios" },
+      {
+        key: "evidence",
+        label: "Evidencia",
+        render: (row) =>
+          row.evidence ? (
+            <button
+              onClick={() => getEvidence(row.evidence, row.id, row.status === 'Pending')}
+              className={`cursor-pointer ${row.status === 'Pending' ? 'text-orange-500 hover:text-orange-700' : 'text-blue-600 hover:text-blue-800'} font-semibold underline`}
+            >
+              {row.status === 'Pending' && userSession.role?.name === 'Admin' ? 'Revisar' : 'Ver PDF'}
+            </button>
+          ) : (
+            <span className="text-gray-400 italic">Sin evidencia</span>
+          ),
+      },
+      {
+        key: "created_at",
+        label: "Fecha creación",
+        render: (row) => formatDate(row.created_at),
+      },
+      {
+        key: "updated_at",
+        label: "Fecha actualización",
+        render: (row) => formatDate(row.updated_at),
+      },
+    ]
+    :
+    [
+      { key: "id", label: "#" },
+      { key: "user.full_name", label: "Usuario" },
+      { key: "category.name", label: "Servicio" },
+      { key: "amount_reported", label: "Horas reportadas" },
+      {
+        key: "status",
+        label: "Estado",
+        render: (row) => {
+          const style = statusStyles[row.status || "Pending"] || {};
+          return (
+            <span
+              className={`px-2 py-1 rounded-lg font-semibold text-sm ${style.bg} ${style.color}`}
+            >
+              {style.label || row.status}
+            </span>
+          );
+        },
+      },
+      {
+        key: "evidence",
+        label: "Evidencia",
+        render: (row) =>
+          row.evidence ? (
+            <button
+              onClick={() => getEvidence(row.evidence, row.id, row.status === 'Pending')}
+              className={`cursor-pointer ${row.status === 'Pending' ? 'text-orange-500 hover:text-orange-700' : 'text-blue-600 hover:text-blue-800'} font-semibold underline`}
+            >
+              {row.status === 'Pending' && userSession.role?.name === 'Admin' ? 'Revisar' : 'Ver PDF'}
+            </button>
+          ) : (
+            <span className="text-gray-400 italic">Sin evidencia</span>
+          ),
+      },
+      { key: "amount_approved", label: "Horas aprobadas" },
+      { key: "comment", label: "Comentarios" }
+    ];
+
   return (
     <div className="flex flex-col gap-6 p-6">
       <Toaster position="top-right" />
@@ -138,88 +225,22 @@ export default function ServicesListPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <h1 className="text-3xl font-bold text-gray-800">
-          {userSession.role?.name === "Admin"
-            ? "Lista de horas de servicio"
-            : "Mis horas de servicio"}
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-800">{userSession.role?.name === 'Admin' ? 'Lista de horas de servicio' : 'Mis horas de servicio'}</h1>
 
-        {userSession.role?.name === "Student" && (
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={handleCreateNew}
-            className="flex items-center gap-2 cursor-pointer px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition"
-          >
-            <PlusCircle size={20} />
-            Nuevo registro
-          </motion.button>
-        )}
+        {userSession.role?.name === 'Student' && <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={handleCreateNew}
+          className="flex items-center gap-2 cursor-pointer px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition"
+        >
+          <PlusCircle size={20} />
+          Nuevo registro
+        </motion.button>}
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
         <DataTable
-          headers={[
-            { key: "id", label: "#" },
-            { key: "user.full_name", label: "Usuario" },
-            { key: "category.name", label: "Servicio" },
-            { key: "amount_reported", label: "Horas reportadas" },
-            {
-              key: "status",
-              label: "Estado",
-              render: (row) => {
-                const style = statusStyles[row.status || "Pending"] || {};
-                return (
-                  <span
-                    className={`px-2 py-1 rounded-lg font-semibold text-sm ${style.bg} ${style.color}`}
-                  >
-                    {style.label || row.status}
-                  </span>
-                );
-              },
-            },
-            { key: "amount_approved", label: "Horas aprobadas" },
-            { key: "comment", label: "Comentarios" },
-            {
-              key: "evidence",
-              label: "Evidencia",
-              render: (row) =>
-                row.evidence ? (
-                  <button
-                    onClick={() =>
-                      getEvidence(
-                        row.evidence,
-                        row.id,
-                        row.status === "Pending"
-                      )
-                    }
-                    className={`cursor-pointer ${
-                      row.status === "Pending"
-                        ? "text-orange-500 hover:text-orange-700"
-                        : "text-blue-600 hover:text-blue-800"
-                    } font-semibold underline`}
-                  >
-                    {row.status === "Pending" ? "Revisar" : "Ver PDF"}
-                  </button>
-                ) : (
-                  <span className="text-gray-400 italic">Sin evidencia</span>
-                ),
-            },
-            {
-              key: "created_at",
-              label: "Fecha creación",
-              render: (row) => formatDate(row.created_at),
-            },
-            {
-              key: "updated_at",
-              label: "Fecha actualización",
-              render: (row) => formatDate(row.updated_at),
-            },
-          ]}
+          headers={columsHeaders}
           data={serviList}
           pageSize={10}
         />
@@ -260,23 +281,16 @@ export default function ServicesListPage() {
                     <iframe
                       src={pdfUrl}
                       title="Evidencia PDF"
-                      className={` ${
-                        isReviewMode ? "w-[60%]" : " w-full"
-                      } h-[50vh] border rounded-lg mb-4`}
+                      className={` ${isReviewMode && userSession.role?.name === 'Admin' ? 'w-[60%]' : ' w-full'} h-[50vh] border rounded-lg mb-4`}
                     />
-                  ) : (
-                    <div
-                      className={` ${
-                        isReviewMode ? "w-[60%]" : "w-full"
-                      } flex justify-center items-center h-[50vh] border border-gray-300 rounded-lg mb-4`}
-                    >
-                      <span className="text-gray-500 italic">
-                        No hay evidencia disponible
-                      </span>
-                    </div>
-                  )}
+                  )
+                    : (
+                      <div className={` ${isReviewMode && userSession.role?.name === 'Admin' ? 'w-[60%]' : 'w-full'} flex justify-center items-center h-[50vh] border border-gray-300 rounded-lg mb-4`}>
+                        <span className="text-gray-500 italic">No hay evidencia disponible</span>
+                      </div>
+                    )}
 
-                  {isReviewMode && (
+                  {isReviewMode && userSession.role?.name === 'Admin' && (
                     <div className="flex flex-col gap-4 w-[40%] ">
                       <input
                         type="number"
@@ -312,14 +326,14 @@ export default function ServicesListPage() {
                       >
                         {loading ? (
                           <>
-                            <Loader2 className="animate-spin" size={20} />{" "}
-                            Enviando...
+                            <Loader2 className="animate-spin" size={20} /> Enviando...
                           </>
                         ) : (
                           "Enviar revisión"
                         )}
                       </motion.button>
                     </div>
+
                   )}
                 </div>
               )}
