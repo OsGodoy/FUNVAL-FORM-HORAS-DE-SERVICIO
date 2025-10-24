@@ -59,15 +59,12 @@ export default function ChangePassword({ isOpen, onClose }) {
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {/* Botón cerrar */}
-            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition">
+            <button onClick={onClose} className="cursor-pointer absolute top-4 right-4 text-gray-400 hover:text-red-500 transition">
               <X size={22} />
             </button>
 
-            {/* Título */}
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">Configuración de perfil</h2>
+            <h2 className=" text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">Configuración de perfil</h2>
 
-            {/* 🧾 Información del usuario */}
             <div className="mb-6 bg-gray-50 border border-gray-200 rounded-xl p-4">
               <h3 className="text-gray-700 font-medium mb-3">Información personal</h3>
 
