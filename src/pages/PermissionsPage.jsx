@@ -3,7 +3,7 @@ import * as Icons from "lucide-react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { getFunval } from "../api/funval/services";
 import { menu } from "framer-motion/client";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function PermissionsPage() {
   const [menuData, setMenuData] = useState([]);
@@ -236,6 +236,7 @@ export default function PermissionsPage() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
+      <Toaster position="top-right" />
       <h2 className="text-3xl font-semibold mb-6 text-gray-800">
         Gestión de Permisos
       </h2>
