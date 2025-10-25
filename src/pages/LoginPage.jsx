@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { postFunval } from "../api/funval/services.js";
 import { useAuth } from "../contexts/Auth-context.jsx";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const images = [
@@ -16,11 +17,12 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, loading, authenticating } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/home");
+      const timer = setTimeout(() => navigate("/home"), 1000);
+      return () => clearTimeout(timer);
     }
   }, [isAuthenticated, navigate]);
 
@@ -34,16 +36,27 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
+
+    if (!email.trim() || !password.trim()) {
+      setErrorMsg("Por favor ingrese sus credenciales");
+      return;
+    }
+
     try {
-      await login({ email, password });
-      if (remember) {
-        localStorage.setItem("rememberedEmail", email);
+      const result = await login({ email, password });
+
+      if (result) {
+        if (remember) localStorage.setItem("rememberedEmail", email);
+        else localStorage.removeItem("rememberedEmail");
+        navigate("/home");
       } else {
-        localStorage.removeItem("rememberedEmail");
+        setErrorMsg("Credenciales incorrectas");
+        toast.error("Credenciales incorrectas");
       }
-    } catch (error) {
-      console.error("Error al iniciar sesión:", error);
-      setErrorMsg("Credenciales incorrectas");
+    } catch (err) {
+      setErrorMsg("Error al iniciar sesión.");
+      toast.error("Error al iniciar sesión.");
     }
   };
 
@@ -54,31 +67,39 @@ export default function LoginPage() {
     return () => clearInterval(interval);
   }, []);
 
+  if (isAuthenticated || authenticating) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen gap-6">
+        <div className="w-14 h-14 border-[6px] border-[#C1DFF7] border-t-[#37A5F2] rounded-full animate-spin"></div>
+        <p className="text-lg font-semibold tracking-wide ">
+          Validando datos...
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <section className="min-h-screen flex items-center justify-center bg-linear-to-b from-blue-400 to-blue-600 px-4">
-      <div className="bg-white flex flex-col md:flex-row rounded-lg shadow-2xl overflow-hidden w-full max-w-100 md:max-w-180 lg:max-w-200">
+    <section className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#e3e8ef] to-[#f8fafc] px-4">
+      <div className="bg-white flex flex-col lg:flex-row rounded-3xl shadow-2xl overflow-hidden w-full max-w-6xl min-h-[600px]">
         {/* Left Side: Form */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center items-center px-6 py-10 md:py-6 lg:py-10">
-          <div className="w-full max-w-md flex flex-col items-center justify-center">
+        <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-8 sm:px-12 py-16">
+          <div className="w-full max-w-md">
             <Link to={"/"}>
               <img
                 src="/images/funval-logo.svg"
                 alt="Funval Logo"
-                className="mb-8 w-40"
+                className="mb-8 w-40 "
               />
             </Link>
 
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col gap-6 w-full"
-            >
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               <input
                 name="email"
                 type="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition w-full"
+                className="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition w-full"
               />
               <div>
                 <input
@@ -87,7 +108,7 @@ export default function LoginPage() {
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`p-3 rounded-lg border ${
+                  className={`p-3 rounded-xl border ${
                     errorMsg ? "border-red-500" : "border-gray-300"
                   } focus:outline-none focus:ring-2 focus:ring-indigo-400 transition w-full`}
                 />
@@ -100,22 +121,22 @@ export default function LoginPage() {
                   type="checkbox"
                   checked={remember}
                   onChange={(e) => setRemember(e.target.checked)}
-                  className="accent-indigo-600"
+                  className="accent-blue-500"
                 />
                 Recuerdame
               </label>
               <button
                 type="submit"
-                className="bg-[#155CFD] text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 active:scale-95 transition-transform duration-200 cursor-pointer"
+                className="bg-blue-500 text-white py-3 rounded-xl font-semibold hover:bg-blue-600 active:scale-95 transition-transform duration-200 cursor-pointer"
               >
-                Acceder
+                Login
               </button>
             </form>
           </div>
         </div>
 
         {/* Right Side: Carousel */}
-        <div className="hidden md:flex md:w-1/2 relative items-center justify-center bg-gray-100">
+        <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center bg-gray-100">
           {images.map((img, i) => (
             <img
               key={i}
