@@ -79,27 +79,30 @@ export default function LoginPage() {
   }
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#e3e8ef] to-[#f8fafc] px-4">
-      <div className="bg-white flex flex-col lg:flex-row rounded-3xl shadow-2xl overflow-hidden w-full max-w-6xl min-h-[600px]">
+    <section className="min-h-screen flex items-center justify-center bg-linear-to-b from-blue-400 to-blue-600 px-4">
+      <div className="bg-white flex flex-col md:flex-row rounded-lg shadow-2xl overflow-hidden w-full max-w-100 md:max-w-180 lg:max-w-200">
         {/* Left Side: Form */}
-        <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-8 sm:px-12 py-16">
-          <div className="w-full max-w-md">
+        <div className="w-full md:w-1/2 flex flex-col justify-center items-center px-6 py-10 md:py-6 lg:py-10">
+          <div className="w-full max-w-md flex flex-col items-center justify-center">
             <Link to={"/"}>
               <img
                 src="/images/funval-logo.svg"
                 alt="Funval Logo"
-                className="mb-8 w-40 "
+                className="mb-8 w-40"
               />
             </Link>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-6 w-full"
+            >
               <input
                 name="email"
                 type="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition w-full"
+                className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition w-full"
               />
               <div>
                 <input
@@ -108,7 +111,7 @@ export default function LoginPage() {
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`p-3 rounded-xl border ${
+                  className={`p-3 rounded-lg border ${
                     errorMsg ? "border-red-500" : "border-gray-300"
                   } focus:outline-none focus:ring-2 focus:ring-indigo-400 transition w-full`}
                 />
@@ -121,22 +124,22 @@ export default function LoginPage() {
                   type="checkbox"
                   checked={remember}
                   onChange={(e) => setRemember(e.target.checked)}
-                  className="accent-blue-500"
+                  className="accent-indigo-600"
                 />
                 Recuerdame
               </label>
               <button
                 type="submit"
-                className="bg-blue-500 text-white py-3 rounded-xl font-semibold hover:bg-blue-600 active:scale-95 transition-transform duration-200 cursor-pointer"
+                className="bg-[#155CFD] text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 active:scale-95 transition-transform duration-200 cursor-pointer"
               >
-                Login
+                Acceder
               </button>
             </form>
           </div>
         </div>
 
         {/* Right Side: Carousel */}
-        <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center bg-gray-100">
+        <div className="hidden md:flex md:w-1/2 relative items-center justify-center bg-gray-100">
           {images.map((img, i) => (
             <img
               key={i}
